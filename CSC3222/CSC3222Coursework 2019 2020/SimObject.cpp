@@ -30,6 +30,6 @@ void SimObject::UpdateAnimFrame(float dt) {
 
 	if (frameTime < 0) {
 		currentanimFrame = (currentanimFrame + 1) % animFrameCount;
-		frameTime += 1.0f / 12.0f;
+		frameTime += 1.0f / 12.0f; // 12fps
 	}
 }

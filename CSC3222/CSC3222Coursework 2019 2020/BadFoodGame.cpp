@@ -39,8 +39,7 @@ void BadFoodGame::Update(float dt) {
 	newObjects.clear();
 
 	gameTime += dt;
-	// second update
-	if (gameTime > second)
+	if (gameTime > second) // update second
 		second++;
 
 	renderer->Update(dt);
@@ -88,13 +87,13 @@ void BadFoodGame::InitialiseGame() {
 	}
 	gameObjects.clear();
 
-	currentMap = new GameMap("BadFoodMap.txt", gameObjects, *texManager);
+	currentMap = new GameMap("BadFoodMap.txt", gameObjects, *texManager); 
 
 	cellsize = 16;
 	renderer->SetScreenProperties(cellsize, currentMap->GetMapWidth(), currentMap->GetMapHeight());
 
 	player = new PlayerCharacter();
-	player->SetCharacterType(PlayerCharacter::CharacterType::TYPE_A);
+	player->SetCharacterType(PlayerCharacter::CharacterType::TYPE_B);
 	player->SetPosition(Vector2(100, 200));
 	AddNewObject(player);
 
@@ -103,6 +102,7 @@ void BadFoodGame::InitialiseGame() {
 	AddNewObject(testRobot);
 
 	/* Test: Robots Spawns
+
 	for (int i = 0; i < 100; i++) {
 		BadRobot* testRobot = new BadRobot();
 	    float randX = (rand() % 100) / 100.0;
@@ -110,6 +110,7 @@ void BadFoodGame::InitialiseGame() {
 		testRobot->SetPosition(Vector2(randX * 16 * currentMap->GetMapWidth(), randY * 16 * currentMap->GetMapHeight()));
 		AddNewObject(testRobot);
 	}
+
 	*/
 
 	Laser* testLaser = new Laser(Vector2(1,0));
@@ -145,11 +146,18 @@ void BadFoodGame::AddNewObject(SimObject* object) {
 	}
 }
 
+/*
+
+
+Added By Me.
+
+
+*/
+
 float BadFoodGame::getGameTime()
 {
 	return gameTime;
 }
-
 
 void NCL::CSC3222::BadFoodGame::EnableRandomSpawn(float possibility)
 {

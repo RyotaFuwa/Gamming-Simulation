@@ -17,16 +17,16 @@ int main() {
 		return -1;
 	}
 
-	Matrix4 test = Matrix4::Orthographic(-1, 1, 800, 0, 0, 600);
-
+	// Matrix4 test = Matrix4::Orthographic(-1, 1, 800, 0, 0, 600);
 	BadFoodGame* theGame = new BadFoodGame();
 	w->GetTimer()->GetTimeDeltaSeconds(); //Reset so we don't get a big dt in the first frame!
+
+
 	while (w->UpdateWindow() && !Window::GetKeyboard()->KeyDown(KeyboardKeys::ESCAPE)) {
-		float time = w->GetTimer()->GetTimeDeltaSeconds();
+		float dt = w->GetTimer()->GetTimeDeltaSeconds();
 		float globalTime = theGame->getGameTime();
 
-
-		theGame->Update(time);
+		theGame->Update(dt);
 		theGame->EnableRandomSpawn(0.1);
 
 		if (Window::GetKeyboard()->KeyPressed(KeyboardKeys::PRIOR)) {
@@ -43,10 +43,10 @@ int main() {
 			w->SetFullScreen(false);
 		}
 
-		w->SetTitle(std::to_string(time));
+		w->SetTitle(std::to_string(dt));
 	}
 
-	delete theGame;
 
+	delete theGame;
 	Window::DestroyGameWindow();
 }

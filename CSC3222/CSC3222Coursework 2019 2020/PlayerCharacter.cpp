@@ -26,8 +26,8 @@ PlayerCharacter::~PlayerCharacter() {
 
 }
 
-bool PlayerCharacter::UpdateObject(float dt) {
-	float testSpeed = 64;
+bool PlayerCharacter::UpdateObject(float dt) { 
+	float testSpeed = 64; // Now it uses constant speed (64 [Length][Time]^-1).
 
 	Vector2 newVelocity;
 
