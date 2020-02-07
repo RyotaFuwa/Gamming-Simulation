@@ -24,7 +24,7 @@ namespace NCL {
 			void AddNewObject(SimObject* object);
 
 			float getGameTime();
-			void EnableRandomSpawn(float rate);
+			void AutoSpawnEnemy(float possiblity, int limit);
 
 
 		protected:
@@ -48,10 +48,11 @@ namespace NCL {
 			int balloons;
 			int lives;
 
-			int spawned; // for random spawned
-
 			std::vector<SimObject*> gameObjects;
 			std::vector<SimObject*> newObjects;
+
+			// internal control variables
+			int numOfEnemy;
 		};
 	}
 }

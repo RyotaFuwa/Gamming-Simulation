@@ -47,6 +47,12 @@ void GameSimsPhysics::RemoveCollider(CollisionVolume* c) {
 
 void GameSimsPhysics::Integration(float dt) {
 
+	for (auto each : allBodies) { // acceleration(use appropriate numerical approximation for v = a * dt)
+		Vector2 acceleration = each->force * each->inverseMass;
+		each->velocity += acceleration * dt;
+		each->position += each->velocity * dt;
+	}
+
 }
 
 void GameSimsPhysics::CollisionDetection(float dt) {

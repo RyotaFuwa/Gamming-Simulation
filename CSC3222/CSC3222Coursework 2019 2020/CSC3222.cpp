@@ -26,8 +26,8 @@ int main() {
 		float dt = w->GetTimer()->GetTimeDeltaSeconds();
 		float globalTime = theGame->getGameTime();
 
+		theGame->AutoSpawnEnemy(0.1, 10);
 		theGame->Update(dt);
-		theGame->EnableRandomSpawn(0.1);
 
 		if (Window::GetKeyboard()->KeyPressed(KeyboardKeys::PRIOR)) {
 			w->ShowConsole(true);
@@ -43,7 +43,7 @@ int main() {
 			w->SetFullScreen(false);
 		}
 
-		w->SetTitle(std::to_string(dt));
+		w->SetTitle(std::to_string(globalTime));
 	}
 
 

@@ -26,10 +26,15 @@ PlayerCharacter::~PlayerCharacter() {
 
 }
 
-bool PlayerCharacter::UpdateObject(float dt) { 
+bool PlayerCharacter::UpdateObject(float dt) {// Define how object moves 
+
 	float testSpeed = 64; // Now it uses constant speed (64 [Length][Time]^-1).
+	// float testSpeed = 16.0 * 32.0; //cellsize * # of cells = field size. character runs from one side to the other in 1s
 
 	Vector2 newVelocity;
+
+	float constForce = 32;
+	Vector2 newForce;
 
 	currentAnimDir = MovementDir::Idle;
 
@@ -37,28 +42,80 @@ bool PlayerCharacter::UpdateObject(float dt) {
 		currentAnimDir = MovementDir::Up;
 		UpdateAnimFrame(dt);
 
-		newVelocity.y = -testSpeed * dt;
+		newForce.y = -constForce;
 	}
 	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::S)) {
 		currentAnimDir = MovementDir::Down;
 		UpdateAnimFrame(dt);
 
-		newVelocity.y = testSpeed * dt;
+		newForce.y = constForce;
 	}
 	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::A)) {
 		currentAnimDir = MovementDir::Left;
 		UpdateAnimFrame(dt);
 
-		newVelocity.x = -testSpeed * dt;
+		newForce.x = -constForce;
 	}
 	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::D)) {
+		currentAnimDir = MovementDir::Right;
+		UpdateAnimFrame(dt);
+
+		newForce.x = constForce;
+	}
+
+	
+	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::UP)) {
+		currentAnimDir = MovementDir::Up;
+		UpdateAnimFrame(dt);
+
+		newVelocity.y = -testSpeed * dt;
+	}
+	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::DOWN)) {
+		currentAnimDir = MovementDir::Down;
+		UpdateAnimFrame(dt);
+
+		newVelocity.y = testSpeed * dt;
+	}
+	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::LEFT)) {
+		currentAnimDir = MovementDir::Left;
+		UpdateAnimFrame(dt);
+
+		newVelocity.x = -testSpeed * dt;
+	}
+	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::RIGHT)) {
 		currentAnimDir = MovementDir::Right;
 		UpdateAnimFrame(dt);
 
 		newVelocity.x = testSpeed * dt;
 	}
 
+	// mouse control prottype
+	/*
+	if (Window::GetMouse()->ButtonHeld(MouseButtons::LEFT)) {
+		Vector2 mousePos = Window::GetMouse()->GetAbsolutePosition(); //TODO
+		mousePos.x *= game->cellsize * game->currentMap->GetMapWidth() / Window::GetWindow()->GetScreenSize().x;
+		mousePos.y *= game->cellsize * game->currentMap->GetMapWidth() / Window::GetWindow()->GetScreenSize().y;
+		Vector2 dir = mousePos - position; 
+		if (dir.y > dir.x) {
+			if (dir.y >= 0)
+				currentAnimDir = MovementDir::Up;
+			else
+				currentAnimDir = MovementDir::Down;
+		}
+		else {
+			if (dir.x >= 0)
+				currentAnimDir = MovementDir::Right;
+			else
+				currentAnimDir = MovementDir::Left;
+		}
+		UpdateAnimFrame(dt);
+		newForce = dir * 0.1;
+	}
+	*/
+
 	position += newVelocity;
+	force = newForce;
+	
 
 	if (Window::GetKeyboard()->KeyPressed(KeyboardKeys::SPACE)) {
 	}
