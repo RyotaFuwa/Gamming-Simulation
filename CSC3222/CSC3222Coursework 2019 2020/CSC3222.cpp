@@ -17,7 +17,7 @@ int main() {
 		return -1;
 	}
 
-	// Matrix4 test = Matrix4::Orthographic(-1, 1, 800, 0, 0, 600);
+	// Matrix4 test = Matrix4::Orthographic(-1, 1, 800, 0, 0, 600);	
 	BadFoodGame* theGame = new BadFoodGame();
 	w->GetTimer()->GetTimeDeltaSeconds(); //Reset so we don't get a big dt in the first frame!
 
