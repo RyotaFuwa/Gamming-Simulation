@@ -2,6 +2,7 @@
 #include "TextureManager.h"
 #include "../../Common/Window.h"
 #include "GameSimsRenderer.h"
+#include "Laser.h"
 
 using namespace NCL;
 using namespace CSC3222;
@@ -28,7 +29,7 @@ PlayerCharacter::~PlayerCharacter() {
 
 bool PlayerCharacter::UpdateObject(float dt) {// Define how object moves 
 
-	float testSpeed = 64; // Now it uses constant speed (64 [Length][Time]^-1).
+	float constSpeed = 64; // Now it uses constant speed (64 [Length][Time]^-1).
 	// float testSpeed = 16.0 * 32.0; //cellsize * # of cells = field size. character runs from one side to the other in 1s
 
 	Vector2 newVelocity;
@@ -41,8 +42,9 @@ bool PlayerCharacter::UpdateObject(float dt) {// Define how object moves
 	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::W)) {
 		currentAnimDir = MovementDir::Up;
 		UpdateAnimFrame(dt);
-
-		newForce.y = -constForce;
+		
+		AddForce(Vector2(0,32));
+		
 	}
 	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::S)) {
 		currentAnimDir = MovementDir::Down;
@@ -68,25 +70,31 @@ bool PlayerCharacter::UpdateObject(float dt) {// Define how object moves
 		currentAnimDir = MovementDir::Up;
 		UpdateAnimFrame(dt);
 
-		newVelocity.y = -testSpeed * dt;
+		newVelocity.y = -constSpeed;
 	}
 	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::DOWN)) {
 		currentAnimDir = MovementDir::Down;
 		UpdateAnimFrame(dt);
 
-		newVelocity.y = testSpeed * dt;
+		newVelocity.y = constSpeed;
 	}
 	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::LEFT)) {
 		currentAnimDir = MovementDir::Left;
 		UpdateAnimFrame(dt);
 
-		newVelocity.x = -testSpeed * dt;
+		newVelocity.x = -constSpeed;
 	}
 	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::RIGHT)) {
 		currentAnimDir = MovementDir::Right;
 		UpdateAnimFrame(dt);
 
-		newVelocity.x = testSpeed * dt;
+		newVelocity.x = constSpeed;
+	}
+
+	// shoot laser
+	if (Window::GetMouse()->ButtonPressed(MouseButtons::LEFT)) {
+		Laser* l = new Laser(Vector2(1, 0));
+		game->AddNewObject();
 	}
 
 	// mouse control prottype
@@ -113,8 +121,8 @@ bool PlayerCharacter::UpdateObject(float dt) {// Define how object moves
 	}
 	*/
 
-	position += newVelocity;
-	force = newForce;
+	// velocity = newVelocity;
+	// force = newForce;
 	
 
 	if (Window::GetKeyboard()->KeyPressed(KeyboardKeys::SPACE)) {

@@ -30,6 +30,10 @@ namespace NCL {
 				force += newForce;
 			}
 
+			void SetForceToZero() {
+				force = Vector2(0, 0);
+			}
+
 
 		protected:
 			Vector2 position;

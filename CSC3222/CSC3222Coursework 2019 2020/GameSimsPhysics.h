@@ -21,11 +21,24 @@ namespace NCL {
 			void RemoveCollider(CollisionVolume* c);
 
 		protected:
-			void Integration(float dt);
-			void CollisionDetection(float dt);
+			void IntegrateAcceleration(float dt);
+			void IntegrateVelocity(float dt);
+
+			bool CollisionDetection(float dt);
+
+			// collision detection for different shapes
+			bool CollideCheck(int i, int j);
+			bool CircleCircleCollision(int i, int j); 
+			bool CircleAABBCollision(int i, int j);
+			bool AABBAABBCollision(int i, int j);
 
 			std::vector<RigidBody*>			allBodies;
 			std::vector<CollisionVolume*>	allColliders;
+
+			struct  {
+				int bodyIndex1;
+				int bodyIndex2; // TODO add another info
+			} collisionRegsister;
 		};
 	}
 }
