@@ -38,6 +38,14 @@ namespace NCL {
 		}
 	
 
+		Vector2 Clamp(const Vector2& a, const Vector2& mins, const Vector2& maxs)
+		{
+			return Vector2(
+				Clamp(a.x, mins.x, maxs.x),
+				Clamp(a.y, mins.y, maxs.y)
+			);
+		}
+
 		Vector3 Clamp(const Vector3& a, const Vector3&mins, const Vector3& maxs) {
 			return Vector3(
 				Clamp(a.x, mins.x, maxs.x),

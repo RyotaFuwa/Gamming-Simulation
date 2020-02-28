@@ -3,6 +3,7 @@
 
 namespace NCL {
 	namespace CSC3222 {
+		class BadFoodGame;
 		class PlayerCharacter : public SimObject
 		{
 		public:
@@ -18,6 +19,10 @@ namespace NCL {
 			void DrawObject(GameSimsRenderer& r) override;
 
 			void SetCharacterType(CharacterType t);
+			
+			int GetPlayerId() { return playerId; }
+
+			void CollisionCallback(const SimObject* other, const CollisionRegister& cReg) override;
 
 		protected:
 			enum class MovementDir {
@@ -31,7 +36,10 @@ namespace NCL {
 			void DrawCharacterB(GameSimsRenderer& r);
 
 			MovementDir		currentAnimDir;
-			CharacterType	charType;
+			CharacterType		charType;
+			int playerId;
+		private:
+			static int NumOfPlayers;
 		};
 	}
 }

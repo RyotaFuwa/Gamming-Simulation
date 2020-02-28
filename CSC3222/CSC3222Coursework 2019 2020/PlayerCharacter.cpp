@@ -3,6 +3,8 @@
 #include "../../Common/Window.h"
 #include "GameSimsRenderer.h"
 #include "Laser.h"
+#include "BadFoodGame.h"
+#include "CollisionVolume.h"
 
 using namespace NCL;
 using namespace CSC3222;
@@ -18,9 +20,16 @@ int  charBRunY		= 96;
 int  charBRunX[]	= { 128,160,192,224,256,288 };
 bool charBFlips[]	= { false, true, true, false, false };
 
-PlayerCharacter::PlayerCharacter() : SimObject() {
+int PlayerCharacter::NumOfPlayers = 1;
+
+PlayerCharacter::PlayerCharacter() : SimObject(), playerId(NumOfPlayers) {
 	currentAnimDir		= MovementDir::Left;
 	SetCharacterType(CharacterType::TYPE_A);
+
+	CollisionVolume* cv = new AABB(Vector2(8, 12)); // determined by looking at the character size on screen
+	SetCollider(cv);
+
+	NumOfPlayers++;
 }
 
 PlayerCharacter::~PlayerCharacter() {
@@ -30,9 +39,7 @@ PlayerCharacter::~PlayerCharacter() {
 bool PlayerCharacter::UpdateObject(float dt) {// Define how object moves 
 
 	float constSpeed = 64; // Now it uses constant speed (64 [Length][Time]^-1).
-	// float testSpeed = 16.0 * 32.0; //cellsize * # of cells = field size. character runs from one side to the other in 1s
-
-	Vector2 newVelocity;
+	// float testSpeed = 16.0 * 32.0; //cellsize * # of cells = field size. character runs from one side to the other in 1saa
 
 	float constForce = 32;
 	Vector2 newForce;
@@ -43,86 +50,84 @@ bool PlayerCharacter::UpdateObject(float dt) {// Define how object moves
 		currentAnimDir = MovementDir::Up;
 		UpdateAnimFrame(dt);
 		
-		AddForce(Vector2(0,32));
+		// AddForce(Vector2(0, -constForce));
+		newForce.y = -constForce;
 		
 	}
 	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::S)) {
 		currentAnimDir = MovementDir::Down;
 		UpdateAnimFrame(dt);
 
+		 // AddForce(Vector2(0, constForce));
 		newForce.y = constForce;
 	}
 	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::A)) {
 		currentAnimDir = MovementDir::Left;
 		UpdateAnimFrame(dt);
 
+		 // AddForce(Vector2(-constForce, 0));
 		newForce.x = -constForce;
 	}
 	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::D)) {
 		currentAnimDir = MovementDir::Right;
 		UpdateAnimFrame(dt);
 
+		 // AddForce(Vector2(constForce, 0));
 		newForce.x = constForce;
 	}
 
 	
+	// default movement setting (move character with constant velocity)
 	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::UP)) {
 		currentAnimDir = MovementDir::Up;
 		UpdateAnimFrame(dt);
 
-		newVelocity.y = -constSpeed;
+		force = Vector2(0, 0);
+		velocity = Vector2(0, 0);
+		position.y += -constSpeed * dt;
 	}
 	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::DOWN)) {
 		currentAnimDir = MovementDir::Down;
 		UpdateAnimFrame(dt);
 
-		newVelocity.y = constSpeed;
+		force = Vector2(0, 0);
+		velocity = Vector2(0, 0);
+		position.y += constSpeed * dt;
 	}
 	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::LEFT)) {
 		currentAnimDir = MovementDir::Left;
 		UpdateAnimFrame(dt);
 
-		newVelocity.x = -constSpeed;
+		force = Vector2(0, 0);
+		velocity = Vector2(0, 0);
+		position.x += -constSpeed * dt;
 	}
 	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::RIGHT)) {
 		currentAnimDir = MovementDir::Right;
 		UpdateAnimFrame(dt);
 
-		newVelocity.x = constSpeed;
+		force = Vector2(0, 0); 
+		velocity = Vector2(0, 0);
+		position.x += constSpeed * dt;
 	}
 
-	// shoot laser
 	if (Window::GetMouse()->ButtonPressed(MouseButtons::LEFT)) {
-		Laser* l = new Laser(Vector2(1, 0));
-		game->AddNewObject();
+		Vector2 mousePos = Window::GetMouse()->GetAbsolutePosition(); //TODO
+		float coordinateRatioX = game->GetCurrentMap()->GetMapWidth() / Window::GetWindow()->GetScreenSize().x;
+		float coordinateRatioY = game->GetCurrentMap()->GetMapHeight() / Window::GetWindow()->GetScreenSize().y;
+		mousePos.x *= game->GetCellSize() * coordinateRatioX;
+		mousePos.y *= game->GetCellSize() * coordinateRatioY;
+		Vector2 dir = mousePos - position;
+		Laser* l = new Laser(dir.Normalised() * 200, playerId);
+		l->SetPosition(position);
+		game->AddNewObject(l);
 	}
 
 	// mouse control prottype
-	/*
-	if (Window::GetMouse()->ButtonHeld(MouseButtons::LEFT)) {
-		Vector2 mousePos = Window::GetMouse()->GetAbsolutePosition(); //TODO
-		mousePos.x *= game->cellsize * game->currentMap->GetMapWidth() / Window::GetWindow()->GetScreenSize().x;
-		mousePos.y *= game->cellsize * game->currentMap->GetMapWidth() / Window::GetWindow()->GetScreenSize().y;
-		Vector2 dir = mousePos - position; 
-		if (dir.y > dir.x) {
-			if (dir.y >= 0)
-				currentAnimDir = MovementDir::Up;
-			else
-				currentAnimDir = MovementDir::Down;
-		}
-		else {
-			if (dir.x >= 0)
-				currentAnimDir = MovementDir::Right;
-			else
-				currentAnimDir = MovementDir::Left;
-		}
-		UpdateAnimFrame(dt);
-		newForce = dir * 0.1;
+	if (Window::GetMouse()->ButtonHeld(MouseButtons::RIGHT)) {
 	}
-	*/
 
-	// velocity = newVelocity;
-	// force = newForce;
+	force = newForce;
 	
 
 	if (Window::GetKeyboard()->KeyPressed(KeyboardKeys::SPACE)) {
@@ -178,5 +183,22 @@ void PlayerCharacter::SetCharacterType(CharacterType t) {
 			texture = texManager->GetTexture("Twiggy_spritesheet.png"); 
 			animFrameCount = 6;
 			break;
+	}
+}
+
+void NCL::CSC3222::PlayerCharacter::CollisionCallback(const SimObject* other, const CollisionRegister& cReg)
+{
+	Laser* pObj = (Laser*)other;
+	if (pObj) {
+		if (playerId == pObj->GetPlayerId()) {
+		}
+		else {
+			std::cout << "Collision Detected !! AT (";
+			std::cout << GetPosition().x << ", " << GetPosition().y << ")" << std::endl; // prottype
+		}
+	}
+	else {
+		std::cout << "Collision Detected !! AT (";
+		std::cout << GetPosition().x << ", " << GetPosition().y << ")" << std::endl; // prottype
 	}
 }

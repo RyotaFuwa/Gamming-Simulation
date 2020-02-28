@@ -113,4 +113,7 @@
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="CSC3222 2019.rc" />
+  </ItemGroup>
 </Project>

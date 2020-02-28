@@ -41,6 +41,7 @@ namespace NCL {
 			return value;
 		}
 
+		Vector2 Clamp(const Vector2& a, const Vector2& mins, const Vector2& maxs);
 		Vector3 Clamp(const Vector3& a, const Vector3&mins, const Vector3& maxs);
 
 		template<class T>

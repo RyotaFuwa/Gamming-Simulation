@@ -1,6 +1,8 @@
 #include "Coin.h"
 #include "TextureManager.h"
 #include "GameSimsRenderer.h"
+#include "CollisionVolume.h"
+
 
 using namespace NCL;
 using namespace CSC3222;
@@ -15,6 +17,9 @@ Vector2 animFrames[] = {
 Coin::Coin() : SimObject() {
 	animFrameCount = 4;
 	texture = texManager->GetTexture("Items.png");
+
+	CollisionVolume* cv = new Circle(8.0);
+	SetCollider(cv);
 }
 
 Coin::~Coin() {

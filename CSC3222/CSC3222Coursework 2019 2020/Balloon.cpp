@@ -1,12 +1,16 @@
 #include "Balloon.h"
 #include "TextureManager.h"
 #include "GameSimsRenderer.h"
+#include "CollisionVolume.h"
 
 using namespace NCL;
 using namespace CSC3222;
 
 Balloon::Balloon() : SimObject() {
 	texture = texManager->GetTexture("TL_Creatures.png");
+
+	CollisionVolume* cv = new AABB(Vector2(7, 14));
+	SetCollider(cv);
 }
 
 Balloon::~Balloon() {

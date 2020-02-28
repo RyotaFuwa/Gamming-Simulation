@@ -7,6 +7,9 @@
 #include "../../Common/Vector3.h"
 #include "../../Common/Vector4.h"
 
+#include "PlayerCharacter.h"
+#include "CollisionVolume.h"
+
 using namespace NCL;
 using namespace CSC3222;
 
@@ -32,10 +35,13 @@ Vector4 frames[16] = {
 	Vector4(1, 50, 15, 8)
 };
 
-Laser::Laser(Vector2 direction) : SimObject()	{
+Laser::Laser(Vector2 direction, int pId) : SimObject(), playerId(pId) {
 	texture = texManager->GetTexture("bullet.png");
 
 	velocity = direction;
+
+	CollisionVolume* cv = new Circle(5.0);
+	SetCollider(cv);
 }
 
 Laser::~Laser()	{
@@ -72,4 +78,21 @@ void Laser::DrawObject(GameSimsRenderer &r) {
 
 bool Laser::UpdateObject(float dt) {
 	return true;
+}
+
+void NCL::CSC3222::Laser::CollisionCallback(const SimObject* other, const CollisionRegister& cReg)
+{
+	PlayerCharacter* pObj = (PlayerCharacter*)other;
+	if (pObj) {
+		if (playerId == pObj->GetPlayerId()) {
+		}
+		else {
+			std::cout << "Collision Detected !! AT (";
+			std::cout << GetPosition().x << ", " << GetPosition().y << ")" << std::endl; // prottype
+		}
+	}
+	else {
+		std::cout << "Collision Detected !! AT (";
+		std::cout << GetPosition().x << ", " << GetPosition().y << ")" << std::endl; // prottype
+	}
 }

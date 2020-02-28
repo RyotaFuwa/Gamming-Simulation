@@ -1,6 +1,7 @@
 #include "BadRobot.h"
 #include "TextureManager.h"
 #include "GameSimsRenderer.h"
+#include "CollisionVolume.h"
 
 using namespace NCL;
 using namespace CSC3222;
@@ -33,6 +34,9 @@ BadRobot::BadRobot() : SimObject() {
 	else {
 		type = RobotType::White;
 	}
+
+	CollisionVolume* cv = new Circle(8.0);
+	SetCollider(cv);
 }
 
 BadRobot::~BadRobot() {

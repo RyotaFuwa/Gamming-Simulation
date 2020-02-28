@@ -1,6 +1,7 @@
 #include "Food.h"
 #include "TextureManager.h"
 #include "GameSimsRenderer.h"
+#include "CollisionVolume.h"
 
 using namespace NCL;
 using namespace CSC3222;
@@ -17,6 +18,9 @@ Food::Food() : SimObject() {
 	texture = texManager->GetTexture("food_items16x16.png");
 
 	foodItem = rand() % 5;
+
+	CollisionVolume* cv = new Circle(8.0);
+	SetCollider(cv);
 }
 
 Food::~Food() {

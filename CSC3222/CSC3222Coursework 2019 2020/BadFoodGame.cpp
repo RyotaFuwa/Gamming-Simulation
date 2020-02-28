@@ -1,6 +1,5 @@
 #include "BadFoodGame.h"
 #include "SimObject.h"
-#include "GameMap.h"
 #include "TextureManager.h"
 #include "GameSimsRenderer.h"
 #include "GameSimsPhysics.h"
@@ -43,7 +42,7 @@ void BadFoodGame::Update(float dt) {
 	gameTime += dt;
 
 	renderer->Update(dt);
-	physics->Update(dt);
+	physics->Update(dt); // TODO Add time system different from graphics for physics engine
 	currentMap->DrawMap(*renderer);
 
 	srand((int)(gameTime * 1000.0f));
@@ -77,6 +76,33 @@ void BadFoodGame::Update(float dt) {
 	renderer->DrawCircle(Vector2(100, 100), 10.0f, Vector4(1, 0, 1, 1));
 
 	*/
+
+	/*
+
+	//GameMap Wall Manually
+	enum Side {
+		NORTH,
+		EAST,
+		SOUTH,
+		WEST
+	};
+
+	float width = currentMap->GetMapWidth() * cellsize;
+	float height = currentMap->GetMapHeight() * cellsize;
+	float wallThickness = 4.0;
+	float xMargin = 8.0;
+	float yMargin = 8.0;
+	std::vector<Vector2> mapWallCenters = { Vector2(width / 2.0, yMargin), Vector2(width - xMargin, height / 2.0),
+		Vector2(width / 2.0, height - yMargin), Vector2(xMargin, height / 2.0) };
+	std::vector<Vector2> mapWallHalfSize = { Vector2(width / 2.0, wallThickness), Vector2(wallThickness, height / 2.0),
+		Vector2(width / 2.0, wallThickness), Vector2(wallThickness, height / 2.0) };
+	for (int i = 0; i < 4; i++) {
+		renderer->DrawBox(mapWallCenters[i], mapWallHalfSize[i], Vector4(1, 0, 0, 1));
+	}
+
+
+	*/
+	
 	renderer->Render();
 
 }
@@ -92,6 +118,7 @@ void BadFoodGame::InitialiseGame() {
 
 	cellsize = 16;
 	renderer->SetScreenProperties(cellsize, currentMap->GetMapWidth(), currentMap->GetMapHeight());
+
 
 	player = new PlayerCharacter();
 	player->SetCharacterType(PlayerCharacter::CharacterType::TYPE_B);
@@ -122,6 +149,7 @@ void BadFoodGame::InitialiseGame() {
 	AddNewObject(testBalloon);
 
 	*/
+	
 
 	gameTime		= 0;
 	currentScore	= 0;

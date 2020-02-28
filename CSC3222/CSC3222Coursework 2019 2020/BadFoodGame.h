@@ -1,12 +1,12 @@
 #pragma once
 #include <vector>
+#include "GameMap.h"
 
 namespace NCL {
 	namespace Maths {
 		class Vector2;
 	}
 	namespace CSC3222 {
-		class GameMap;
 		class SimObject;
 		class GameSimsRenderer;
 		class GameSimsPhysics;
@@ -25,7 +25,8 @@ namespace NCL {
 
 			float getGameTime();
 			void AutoSpawnEnemy(float possiblity, int limit);
-
+			int GetCellSize() { return cellsize; }
+			const GameMap* GetCurrentMap() { return currentMap; }
 
 		protected:
 			void InitialiseGame();

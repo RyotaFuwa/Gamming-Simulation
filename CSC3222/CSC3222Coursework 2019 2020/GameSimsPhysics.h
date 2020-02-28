@@ -24,7 +24,7 @@ namespace NCL {
 			void IntegrateAcceleration(float dt);
 			void IntegrateVelocity(float dt);
 
-			bool CollisionDetection(float dt);
+			void HandleCollision(float dt);
 
 			// collision detection for different shapes
 			bool CollideCheck(int i, int j);

@@ -34,7 +34,6 @@ namespace NCL {
 				force = Vector2(0, 0);
 			}
 
-
 		protected:
 			Vector2 position;
 			Vector2 velocity;

@@ -1,6 +1,7 @@
 #pragma once
 #include "../../Common/Vector2.h"
 #include "RigidBody.h"
+#include "BadFoodGame.h"
 
 namespace NCL {
 	using namespace Maths;
@@ -10,16 +11,20 @@ namespace NCL {
 	namespace CSC3222 {
 		class GameSimsRenderer;
 		class TextureManager;
-		class BadFoodGame;
 		class RigidBody;
 		class CollisionVolume;
+
+		struct CollisionRegister {
+			int i; //TODO define collision info other than those in simObject
+			int j; 
+		};
 
 		class SimObject	: public RigidBody {
 		public:
 			SimObject();
 			~SimObject();
 
-			void SetCollider(CollisionVolume * c) {
+			void SetCollider(CollisionVolume * c) { //TODO call setCollider in constructor of each object
 				collider = c;
 			}
 
@@ -30,6 +35,11 @@ namespace NCL {
 			virtual bool UpdateObject(float dt) = 0;
 
 			virtual void DrawObject(GameSimsRenderer &r) = 0;
+
+			virtual void CollisionCallback(const SimObject* other, const CollisionRegister& cReg) {  //TODO define callback for each object
+				std::cout << "Collision Detected !! AT (";
+				std::cout << GetPosition().x << ", " << GetPosition().y << ")" << std::endl; // prottype
+			}
 
 			static void InitObjects(BadFoodGame* game, TextureManager* manager);
 
