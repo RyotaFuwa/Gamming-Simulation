@@ -26,7 +26,7 @@ PlayerCharacter::PlayerCharacter() : SimObject(), playerId(NumOfPlayers) {
 	currentAnimDir		= MovementDir::Left;
 	SetCharacterType(CharacterType::TYPE_A);
 
-	CollisionVolume* cv = new AABB(Vector2(8, 12)); // determined by looking at the character size on screen
+	CollisionVolume* cv = new Circle(7.5f); // determined by looking at the character size on screen
 	SetCollider(cv);
 
 	NumOfPlayers++;
@@ -111,6 +111,7 @@ bool PlayerCharacter::UpdateObject(float dt) {// Define how object moves
 		position.x += constSpeed * dt;
 	}
 
+	// shoot laser
 	if (Window::GetMouse()->ButtonPressed(MouseButtons::LEFT)) {
 		Vector2 mousePos = Window::GetMouse()->GetAbsolutePosition(); //TODO
 		float coordinateRatioX = game->GetCurrentMap()->GetMapWidth() / Window::GetWindow()->GetScreenSize().x;
@@ -123,16 +124,7 @@ bool PlayerCharacter::UpdateObject(float dt) {// Define how object moves
 		game->AddNewObject(l);
 	}
 
-	// mouse control prottype
-	if (Window::GetMouse()->ButtonHeld(MouseButtons::RIGHT)) {
-	}
-
 	force = newForce;
-	
-
-	if (Window::GetKeyboard()->KeyPressed(KeyboardKeys::SPACE)) {
-	}
-
 	return true;
 }
 
@@ -146,6 +138,7 @@ void PlayerCharacter::DrawObject(GameSimsRenderer& r) {
 void PlayerCharacter::DrawCharacterA(GameSimsRenderer& r) {
 	Vector2 screenPos	= position;
 	Vector2 texSize		= Vector2(32, 32);
+	screenPos.y -= 8;
 
 	Vector2	texPos;
 	texPos.x = (float)charARunX[currentanimFrame];
@@ -160,6 +153,7 @@ void PlayerCharacter::DrawCharacterA(GameSimsRenderer& r) {
 void PlayerCharacter::DrawCharacterB(GameSimsRenderer& r) {
 	Vector2 screenPos	= position;
 	Vector2 texSize		= Vector2(32, 32);
+	screenPos.y -= 8;
 
 	Vector2	texPos;
 	texPos.x = (float)charBRunX[currentanimFrame];

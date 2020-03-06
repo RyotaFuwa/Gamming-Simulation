@@ -26,7 +26,7 @@ int main() {
 		float dt = w->GetTimer()->GetTimeDeltaSeconds();
 		float globalTime = theGame->getGameTime();
 
-		theGame->AutoSpawnEnemy(0.1, 10);
+		// theGame->AutoSpawnEnemy(0.1, 10);
 		theGame->Update(dt);
 
 		if (Window::GetKeyboard()->KeyPressed(KeyboardKeys::PRIOR)) {

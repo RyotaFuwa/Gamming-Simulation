@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
 #include "GameMap.h"
+#include "../../Common/Assets.h"
 
 namespace NCL {
 	namespace Maths {
@@ -22,6 +23,7 @@ namespace NCL {
 			void Update(float dt);
 
 			void AddNewObject(SimObject* object);
+			void AddStaticObstacle(const std::string filename);
 
 			float getGameTime();
 			void AutoSpawnEnemy(float possiblity, int limit);

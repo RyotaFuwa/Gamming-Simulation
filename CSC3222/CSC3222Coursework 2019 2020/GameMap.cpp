@@ -18,7 +18,7 @@ Vector4 buildingTypes[4] = {
 	Vector4(208,32,96,64)  //green building
 };
 
-GameMap::GameMap(const std::string& filename, std::vector<SimObject*>& objects, TextureManager& texManager)	{
+GameMap::GameMap(const std::string& filename, std::vector<SimObject*>& objects, TextureManager& texManager) {
 	tileTexture = texManager.GetTexture("badfoodTiles.png");
 
 	std::ifstream mapFile(Assets::DATADIR + filename);
@@ -215,3 +215,4 @@ void GameMap::AddNewTileTex(int x, int y, std::vector<Vector2>& tex) {
 	tex.emplace_back(bottomLeft);
 	tex.emplace_back(bottomRight);
 }
+

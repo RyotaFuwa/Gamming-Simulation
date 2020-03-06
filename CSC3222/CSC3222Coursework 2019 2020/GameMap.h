@@ -7,6 +7,7 @@
 #include "../../Common/Vector4.h"
 #include "../../Common/MeshGeometry.h"
 
+
 namespace NCL {
 	namespace Rendering {
 		class TextureBase;

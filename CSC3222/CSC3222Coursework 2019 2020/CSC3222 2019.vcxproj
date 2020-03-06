@@ -154,6 +154,7 @@
     <ClCompile Include="RigidBody.cpp" />
     <ClCompile Include="BadFoodGame.cpp" />
     <ClCompile Include="SimObject.cpp" />
+    <ClCompile Include="StaticObstacle.cpp" />
     <ClCompile Include="TextureManager.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -171,6 +172,7 @@
     <ClInclude Include="RigidBody.h" />
     <ClInclude Include="BadFoodGame.h" />
     <ClInclude Include="SimObject.h" />
+    <ClInclude Include="StaticObstacle.h" />
     <ClInclude Include="TextureManager.h" />
   </ItemGroup>
   <ItemGroup>

@@ -9,9 +9,14 @@
 #include "Food.h"
 #include "Coin.h"
 #include "Balloon.h"
+#include "StaticObstacle.h"
+
 
 #include "../../Common/Window.h"
 #include "../../Common/TextureLoader.h"
+
+#include <iostream>
+#include <fstream>
 
 using namespace NCL;
 using namespace CSC3222;
@@ -50,7 +55,7 @@ void BadFoodGame::Update(float dt) {
 	for (auto i = gameObjects.begin(); i != gameObjects.end(); ) {
 		if (!(*i)->UpdateObject(dt)) { //object has said its finished with
 			delete (*i);
-			gameObjects.erase(i);
+			i = gameObjects.erase(i);
 		}
 		else {
 			(*i)->DrawObject(*renderer);
@@ -76,6 +81,38 @@ void BadFoodGame::Update(float dt) {
 	renderer->DrawCircle(Vector2(100, 100), 10.0f, Vector4(1, 0, 1, 1));
 
 	*/
+
+	// collision debug
+	for (auto obj : gameObjects) {
+		CollisionVolume* collider = obj->GetCollider();
+		if (dynamic_cast<AABB*>(collider)) {
+			AABB* aabb = (AABB*)collider;
+			renderer->DrawBox(obj->GetPosition(), aabb->GetHalfSize(), Vector4(0, 0, 1, 1));
+
+		}
+		else if (dynamic_cast<Circle*>(collider)) {
+			Circle* circle = (Circle*)collider;
+			renderer->DrawCircle(obj->GetPosition(), circle->GetRadius(), Vector4(0, 1, 0, 1));
+		}
+	}
+
+	/*
+	renderer->DrawBox(Vector2(296, 52), Vector2(8, 36), Vector4(1, 0, 0, 1));
+	renderer->DrawBox(Vector2(272, 76), Vector2(16, 12), Vector4(1, 0, 0, 1));
+	renderer->DrawBox(Vector2(120, 52), Vector2(8, 36), Vector4(1, 0, 0, 1));
+	renderer->DrawBox(Vector2(176, 76), Vector2(48, 12), Vector4(1, 0, 0, 1));
+	*/
+
+	if (Window::GetMouse()->ButtonHeld(MouseButtons::RIGHT)) {
+		Vector2 mousePos = Window::GetMouse()->GetAbsolutePosition(); //TODO
+		float coordinateRatioX = currentMap->GetMapWidth() / Window::GetWindow()->GetScreenSize().x;
+		float coordinateRatioY = currentMap->GetMapHeight() / Window::GetWindow()->GetScreenSize().y;
+		mousePos.x *= coordinateRatioX;
+		mousePos.y *= coordinateRatioY;
+		Vector2 pos(mousePos.x * cellsize, mousePos.y * cellsize);
+		renderer->DrawBox(pos, Vector2(cellsize/2.0, cellsize/2.0), Vector4(1, 0, 0, 1));
+		std::cout << pos << std::endl;
+	}
 
 	/*
 
@@ -119,10 +156,12 @@ void BadFoodGame::InitialiseGame() {
 	cellsize = 16;
 	renderer->SetScreenProperties(cellsize, currentMap->GetMapWidth(), currentMap->GetMapHeight());
 
+	AddStaticObstacle("Walls.txt");
+	AddStaticObstacle("OtherObstacles.txt");
 
 	player = new PlayerCharacter();
 	player->SetCharacterType(PlayerCharacter::CharacterType::TYPE_B);
-	player->SetPosition(Vector2(100, 200));
+	player->SetPosition(Vector2(200, 200));
 	AddNewObject(player);
 
 	/* Test: Object Placement
@@ -167,11 +206,51 @@ void BadFoodGame::AddNewObject(SimObject* object) {
 	}
 }
 
+void NCL::CSC3222::BadFoodGame::AddStaticObstacle(const std::string filename)
+{
+	std::ifstream objFile(Assets::DATADIR + filename);
+
+	if (!objFile) {
+		std::cout << "CAN'T LOAD OBSTACLE FILE!" << std::endl;
+		return;
+	}
+
+	int row;
+	char objShape;
+
+	objFile >> row;
+	for (int i = 0; i < row; i++) {
+		objFile >> objShape;
+		switch (objShape) {
+		case 'R': {
+			Vector2 pos, halfsize;
+			objFile >> pos.x;
+			objFile >> pos.y;
+			objFile >> halfsize.x;
+			objFile >> halfsize.y;
+
+			StaticObstacle* obj = new StaticObstacle(pos, new AABB(halfsize));
+			AddNewObject(obj);
+			break;
+		}
+		case 'C': {
+			Vector2 pos;
+			float radius;
+			objFile >> pos.x;
+			objFile >> pos.y;
+			objFile >> radius;
+
+			StaticObstacle* obj = new StaticObstacle(pos, new Circle(radius));
+			AddNewObject(obj);
+			break;
+		}
+		}
+	}
+}
+
 /*
 
-
 Added By Me.
-
 
 */
 

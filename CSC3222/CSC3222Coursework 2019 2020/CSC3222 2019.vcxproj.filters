@@ -65,6 +65,9 @@
     <ClCompile Include="Food.cpp">
       <Filter>Objects</Filter>
     </ClCompile>
+    <ClCompile Include="StaticObstacle.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SimObject.h">
@@ -110,6 +113,9 @@
       <Filter>Objects</Filter>
     </ClInclude>
     <ClInclude Include="Random.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="StaticObstacle.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

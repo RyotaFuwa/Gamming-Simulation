@@ -1,5 +1,6 @@
 #pragma once
 #include "../../Common/Vector2.h"
+#include "CollisionVolume.h"
 
 namespace NCL {
 	using namespace Maths;
@@ -41,6 +42,7 @@ namespace NCL {
 
 			float inverseMass;
 			float elasticity;
+			CollisionVolume* collider;
 
 		};
 	}

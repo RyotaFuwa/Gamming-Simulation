@@ -44,8 +44,6 @@ namespace NCL {
 			static void InitObjects(BadFoodGame* game, TextureManager* manager);
 
 		protected:
-
-			CollisionVolume*		collider;
 			Rendering::TextureBase* texture;
 
 			void UpdateAnimFrame(float dt);
