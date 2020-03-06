@@ -22,7 +22,7 @@ namespace NCL {
 			
 			int GetPlayerId() { return playerId; }
 
-			void CollisionCallback(const SimObject* other, const CollisionRegister& cReg) override;
+			void CollisionCallback(SimObject* other, const CollisionRegister& cReg) override;
 
 		protected:
 			enum class MovementDir {
@@ -38,6 +38,7 @@ namespace NCL {
 			MovementDir		currentAnimDir;
 			CharacterType		charType;
 			int playerId;
+			int NumOfBalloons;
 		private:
 			static int NumOfPlayers;
 		};

@@ -18,21 +18,28 @@ Food::Food() : SimObject() {
 	texture = texManager->GetTexture("food_items16x16.png");
 
 	foodItem = rand() % 5;
+	eaten = false;
 
 	CollisionVolume* cv = new Circle(8.0);
 	SetCollider(cv);
 }
 
 Food::~Food() {
-
 }
 
 bool Food::UpdateObject(float dt) {
-	return true;
+	return !eaten;
 }
 
 void Food::DrawObject(GameSimsRenderer& r) {
 	Vector2 texPos	= Vector2(foodFrames[currentanimFrame].x, foodFrames[currentanimFrame].y);
 	Vector2 texSize = Vector2(foodFrames[currentanimFrame].z, foodFrames[currentanimFrame].w);
 	r.DrawTextureArea((OGLTexture*)texture, texPos, texSize, position);
+}
+
+void NCL::CSC3222::Food::CollisionCallback(SimObject* other, const CollisionRegister& cReg)
+{
+	if (dynamic_cast<PlayerCharacter*>(other)) {
+		eaten = true;
+	}
 }

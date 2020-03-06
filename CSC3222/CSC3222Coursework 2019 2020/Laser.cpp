@@ -80,7 +80,7 @@ bool Laser::UpdateObject(float dt) {
 	return true;
 }
 
-void NCL::CSC3222::Laser::CollisionCallback(const SimObject* other, const CollisionRegister& cReg)
+void NCL::CSC3222::Laser::CollisionCallback(SimObject* other, const CollisionRegister& cReg)
 {
 	PlayerCharacter* pObj = (PlayerCharacter*)other;
 	if (pObj) {

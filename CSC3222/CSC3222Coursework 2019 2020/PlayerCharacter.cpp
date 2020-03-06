@@ -3,6 +3,8 @@
 #include "../../Common/Window.h"
 #include "GameSimsRenderer.h"
 #include "Laser.h"
+#include "Food.h"
+#include "Balloon.h"
 #include "BadFoodGame.h"
 #include "CollisionVolume.h"
 
@@ -180,19 +182,23 @@ void PlayerCharacter::SetCharacterType(CharacterType t) {
 	}
 }
 
-void NCL::CSC3222::PlayerCharacter::CollisionCallback(const SimObject* other, const CollisionRegister& cReg)
+void NCL::CSC3222::PlayerCharacter::CollisionCallback( SimObject* other, const CollisionRegister& cReg)
 {
-	Laser* pObj = (Laser*)other;
-	if (pObj) {
-		if (playerId == pObj->GetPlayerId()) {
-		}
-		else {
+	if (dynamic_cast<Laser*>(other)) {
+		Laser* laser = (Laser*)other;
+		if (playerId != laser->GetPlayerId()) {
 			std::cout << "Collision Detected !! AT (";
 			std::cout << GetPosition().x << ", " << GetPosition().y << ")" << std::endl; // prottype
 		}
 	}
-	else {
-		std::cout << "Collision Detected !! AT (";
-		std::cout << GetPosition().x << ", " << GetPosition().y << ")" << std::endl; // prottype
+	else if(dynamic_cast<Balloon*>(other)) {
+		Balloon* balloon = (Balloon*)other;
+		if (!balloon->GetOwner()) {
+			std::cout << "Get Balloon !! AT (";
+			NumOfBalloons++;
+		}
+	}
+	else if (dynamic_cast<Food*>(other)) {
+			std::cout << "Get Food !! AT (";
 	}
 }

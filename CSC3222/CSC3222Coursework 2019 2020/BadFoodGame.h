@@ -44,6 +44,10 @@ namespace NCL {
 
 			float gameTime;
 			int second;
+			float physicsRemainingTime;
+			float physicsFixedDeltaTime;
+			float graphicsRemainingTime;
+			float graphicsFixedDeltaTime;
 
 			int currentScore;
 			int foodCount;

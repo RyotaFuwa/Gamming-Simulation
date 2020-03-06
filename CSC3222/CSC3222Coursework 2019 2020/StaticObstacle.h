@@ -13,7 +13,7 @@ namespace NCL {
 			}
 			void DrawObject(GameSimsRenderer& r) override {};
 			bool UpdateObject(float dt) override { return true; };
-			void CollisionCallback(const SimObject* other, const CollisionRegister& cReg) override;
+			void CollisionCallback(SimObject* other, const CollisionRegister& cReg) override;
 		};
 	}
 }

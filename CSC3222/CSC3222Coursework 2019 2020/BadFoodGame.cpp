@@ -45,23 +45,31 @@ void BadFoodGame::Update(float dt) {
 	if (gameTime > second)
 		second++;
 	gameTime += dt;
-
-	renderer->Update(dt);
-	physics->Update(dt); // TODO Add time system different from graphics for physics engine
-	currentMap->DrawMap(*renderer);
-
 	srand((int)(gameTime * 1000.0f));
 
-	for (auto i = gameObjects.begin(); i != gameObjects.end(); ) {
-		if (!(*i)->UpdateObject(dt)) { //object has said its finished with
-			delete (*i);
-			i = gameObjects.erase(i);
+
+	physicsRemainingTime += dt;
+	if (physicsRemainingTime > physicsFixedDeltaTime) { // physics engine: 120 Hz 
+		physics->Update(physicsFixedDeltaTime); 
+		physicsRemainingTime -= physicsFixedDeltaTime;
+	}
+
+	graphicsRemainingTime += dt;
+	if (graphicsRemainingTime > graphicsFixedDeltaTime) { // graphics: 60 Hz
+		renderer->Update(graphicsFixedDeltaTime);
+		currentMap->DrawMap(*renderer);
+		for (auto i = gameObjects.begin(); i != gameObjects.end(); ) {
+			if (!(*i)->UpdateObject(graphicsFixedDeltaTime)) { //object has said its finished with
+				delete (*i);
+				i = gameObjects.erase(i);
+			}
+			else {
+				(*i)->DrawObject(*renderer);
+				++i;
+			}
 		}
-		else {
-			(*i)->DrawObject(*renderer);
-			++i;
-		}
-	}	
+		graphicsRemainingTime -= graphicsFixedDeltaTime;
+	}
 
 	// show stats
 	renderer->DrawString("Score: " + std::to_string(currentScore), Vector2(10, 10));
@@ -69,8 +77,6 @@ void BadFoodGame::Update(float dt) {
 	renderer->DrawString("Food: " + std::to_string(foodCount), Vector2(10, 50));
 	renderer->DrawString("Coins: " + std::to_string(coins), Vector2(10, 70));
 	renderer->DrawString("Balloons: " + std::to_string(balloons), Vector2(10, 90));
-	renderer->DrawString("NumberOfEnemy: " + std::to_string(numOfEnemy), Vector2(10, 110));
-	renderer->DrawString("second: " + std::to_string(second), Vector2(10, 130));
 
 
 	/*
@@ -80,6 +86,13 @@ void BadFoodGame::Update(float dt) {
 	renderer->DrawLine(Vector2(16, 16), Vector2(192, 192), Vector4(1, 1, 0, 1));
 	renderer->DrawCircle(Vector2(100, 100), 10.0f, Vector4(1, 0, 1, 1));
 
+	*/
+
+	/*
+	renderer->DrawBox(Vector2(296, 52), Vector2(8, 36), Vector4(1, 0, 0, 1));
+	renderer->DrawBox(Vector2(272, 76), Vector2(16, 12), Vector4(1, 0, 0, 1));
+	renderer->DrawBox(Vector2(120, 52), Vector2(8, 36), Vector4(1, 0, 0, 1));
+	renderer->DrawBox(Vector2(176, 76), Vector2(48, 12), Vector4(1, 0, 0, 1));
 	*/
 
 	// collision debug
@@ -96,13 +109,7 @@ void BadFoodGame::Update(float dt) {
 		}
 	}
 
-	/*
-	renderer->DrawBox(Vector2(296, 52), Vector2(8, 36), Vector4(1, 0, 0, 1));
-	renderer->DrawBox(Vector2(272, 76), Vector2(16, 12), Vector4(1, 0, 0, 1));
-	renderer->DrawBox(Vector2(120, 52), Vector2(8, 36), Vector4(1, 0, 0, 1));
-	renderer->DrawBox(Vector2(176, 76), Vector2(48, 12), Vector4(1, 0, 0, 1));
-	*/
-
+	// debug tool
 	if (Window::GetMouse()->ButtonHeld(MouseButtons::RIGHT)) {
 		Vector2 mousePos = Window::GetMouse()->GetAbsolutePosition(); //TODO
 		float coordinateRatioX = currentMap->GetMapWidth() / Window::GetWindow()->GetScreenSize().x;
@@ -113,35 +120,7 @@ void BadFoodGame::Update(float dt) {
 		renderer->DrawBox(pos, Vector2(cellsize/2.0, cellsize/2.0), Vector4(1, 0, 0, 1));
 		std::cout << pos << std::endl;
 	}
-
-	/*
-
-	//GameMap Wall Manually
-	enum Side {
-		NORTH,
-		EAST,
-		SOUTH,
-		WEST
-	};
-
-	float width = currentMap->GetMapWidth() * cellsize;
-	float height = currentMap->GetMapHeight() * cellsize;
-	float wallThickness = 4.0;
-	float xMargin = 8.0;
-	float yMargin = 8.0;
-	std::vector<Vector2> mapWallCenters = { Vector2(width / 2.0, yMargin), Vector2(width - xMargin, height / 2.0),
-		Vector2(width / 2.0, height - yMargin), Vector2(xMargin, height / 2.0) };
-	std::vector<Vector2> mapWallHalfSize = { Vector2(width / 2.0, wallThickness), Vector2(wallThickness, height / 2.0),
-		Vector2(width / 2.0, wallThickness), Vector2(wallThickness, height / 2.0) };
-	for (int i = 0; i < 4; i++) {
-		renderer->DrawBox(mapWallCenters[i], mapWallHalfSize[i], Vector4(1, 0, 0, 1));
-	}
-
-
-	*/
-	
-	renderer->Render();
-
+		renderer->Render();
 }
 
 void BadFoodGame::InitialiseGame() {
@@ -155,6 +134,9 @@ void BadFoodGame::InitialiseGame() {
 
 	cellsize = 16;
 	renderer->SetScreenProperties(cellsize, currentMap->GetMapWidth(), currentMap->GetMapHeight());
+
+	physicsFixedDeltaTime = 1.0 / 120;
+	graphicsFixedDeltaTime = 1.0 / 60;
 
 	AddStaticObstacle("Walls.txt");
 	AddStaticObstacle("OtherObstacles.txt");
@@ -188,14 +170,25 @@ void BadFoodGame::InitialiseGame() {
 	AddNewObject(testBalloon);
 
 	*/
+	Food* testFood = new Food();
+	testFood->SetPosition(Vector2(250, 200));
+	AddNewObject(testFood);
+	Coin* testCoin = new Coin();
+	testCoin->SetPosition(Vector2(300, 200));
+	AddNewObject(testCoin);
+	Balloon* testBalloon = new Balloon();
+	testBalloon->SetPosition(Vector2(350, 200));
+	AddNewObject(testBalloon);
 	
 
-	gameTime		= 0;
-	currentScore	= 0;
-	foodCount		= 0;
-	coins			= 0;
-	balloons		= 1;
-	lives			= 3;
+	physicsRemainingTime    = 0;
+	graphicsRemainingTime   = 0;
+	gameTime				= 0;
+	currentScore			= 0;
+	foodCount				= 0;
+	coins					= 0;
+	balloons				= 1;
+	lives					= 3;
 }
 
 void BadFoodGame::AddNewObject(SimObject* object) {

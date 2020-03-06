@@ -1,6 +1,6 @@
 #include "StaticObstacle.h"
 
-void NCL::CSC3222::StaticObstacle::CollisionCallback(const SimObject* other, const CollisionRegister& cReg)
+void NCL::CSC3222::StaticObstacle::CollisionCallback(SimObject* other, const CollisionRegister& cReg)
 {
 	if (!(StaticObstacle*)other) {
 		std::cout << "Collision Detected !! AT (";
