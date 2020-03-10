@@ -2,6 +2,7 @@
 #include "TextureManager.h"
 #include "GameSimsRenderer.h"
 #include "CollisionVolume.h"
+#include "PlayerCharacter.h"
 
 
 using namespace NCL;
@@ -17,6 +18,7 @@ Vector2 animFrames[] = {
 Coin::Coin() : SimObject() {
 	animFrameCount = 4;
 	texture = texManager->GetTexture("Items.png");
+	taken = false;
 
 	CollisionVolume* cv = new Circle(8.0);
 	SetCollider(cv);
@@ -36,4 +38,12 @@ void Coin::DrawObject(GameSimsRenderer& r) {
 	Vector2 texPos	 = animFrames[currentanimFrame];
 	Vector2 texSize	 = Vector2(16,16);
 	r.DrawTextureArea((OGLTexture*)texture, texPos, texSize, position);
+}
+
+void NCL::CSC3222::Coin::CollisionCallback(SimObject* other, const CollisionRegister& cReg)
+{
+	if (dynamic_cast<PlayerCharacter*>(other)) {
+		std::cout << "Taken By Player !! AT (";
+		std::cout << GetPosition().x << ", " << GetPosition().y << ")" << std::endl; // prottype
+	}
 }

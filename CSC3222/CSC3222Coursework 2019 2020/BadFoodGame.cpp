@@ -241,11 +241,6 @@ void NCL::CSC3222::BadFoodGame::AddStaticObstacle(const std::string filename)
 	}
 }
 
-/*
-
-Added By Me.
-
-*/
 
 float BadFoodGame::getGameTime()
 {

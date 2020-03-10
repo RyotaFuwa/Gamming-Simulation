@@ -43,7 +43,7 @@ bool PlayerCharacter::UpdateObject(float dt) {// Define how object moves
 	float constSpeed = 64; // Now it uses constant speed (64 [Length][Time]^-1).
 	// float testSpeed = 16.0 * 32.0; //cellsize * # of cells = field size. character runs from one side to the other in 1saa
 
-	float constForce = 32;
+	float constForce = 64;
 	Vector2 newForce;
 
 	currentAnimDir = MovementDir::Idle;
@@ -187,7 +187,7 @@ void NCL::CSC3222::PlayerCharacter::CollisionCallback( SimObject* other, const C
 	if (dynamic_cast<Laser*>(other)) {
 		Laser* laser = (Laser*)other;
 		if (playerId != laser->GetPlayerId()) {
-			std::cout << "Collision Detected !! AT (";
+			std::cout << "Laser Hit !! AT (";
 			std::cout << GetPosition().x << ", " << GetPosition().y << ")" << std::endl; // prottype
 		}
 	}

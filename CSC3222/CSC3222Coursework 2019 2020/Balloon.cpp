@@ -9,8 +9,8 @@ using namespace CSC3222;
 Balloon::Balloon() : SimObject() {
 	texture = texManager->GetTexture("TL_Creatures.png");
 	owner = nullptr;
-	springConstant = 8.0f;
-	naturalLength = 16.0f;
+	springConstant = 16.0f;
+	naturalLength = 20.0f;
 	dampingConstant = 4.0;
 
 	CollisionVolume* cv = new Circle(8.0);

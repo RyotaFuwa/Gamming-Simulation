@@ -87,12 +87,12 @@ void NCL::CSC3222::Laser::CollisionCallback(SimObject* other, const CollisionReg
 		if (playerId == pObj->GetPlayerId()) {
 		}
 		else {
-			std::cout << "Collision Detected !! AT (";
+			std::cout << "Laser Hit Player !! AT (";
 			std::cout << GetPosition().x << ", " << GetPosition().y << ")" << std::endl; // prottype
 		}
 	}
 	else {
-		std::cout << "Collision Detected !! AT (";
+		std::cout << "Laser Hit!! AT (";
 		std::cout << GetPosition().x << ", " << GetPosition().y << ")" << std::endl; // prottype
 	}
 }

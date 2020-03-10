@@ -28,7 +28,8 @@ Food::~Food() {
 }
 
 bool Food::UpdateObject(float dt) {
-	return !eaten;
+	// return !eaten; //TODO implement deleting objects
+	return true;
 }
 
 void Food::DrawObject(GameSimsRenderer& r) {
@@ -41,5 +42,8 @@ void NCL::CSC3222::Food::CollisionCallback(SimObject* other, const CollisionRegi
 {
 	if (dynamic_cast<PlayerCharacter*>(other)) {
 		eaten = true;
+		std::cout << "Eaten By Player !! AT (";
+		std::cout << GetPosition().x << ", " << GetPosition().y << ")" << std::endl; // prottype
+
 	}
 }
