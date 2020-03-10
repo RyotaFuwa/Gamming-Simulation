@@ -71,14 +71,14 @@ void GameSimsPhysics::HandleCollision(float dt) {
 			if (CollideCheck(i, j)) {
 				SimObject* body1 = (SimObject*)allBodies[i];
 				SimObject* body2 = (SimObject*)allBodies[j];
-				body1->CollisionCallback(body2, CollisionRegister()); //TODO Resolve collision by calling callback defined in object class
-				body2->CollisionCallback(body1, CollisionRegister()); //TODO Resolve collision by calling callback defined in object class
+				body1->CollisionCallback(body2, cReg); //TODO Resolve collision by calling callback defined in object class
+				body2->CollisionCallback(body1, cReg); //TODO Resolve collision by calling callback defined in object class
 			}
 		}
 	}
 }
 
-bool NCL::CSC3222::GameSimsPhysics::CollideCheck(int i, int j)
+bool NCL::CSC3222::GameSimsPhysics::CollideCheck(int i, int j)   
 {
 	if (dynamic_cast<Circle*>(allColliders[i])) {
 		if (dynamic_cast<Circle*>(allColliders[j]))
@@ -109,7 +109,14 @@ bool NCL::CSC3222::GameSimsPhysics::CircleCircleCollision(int i, int j)
 
 	float distance = (pos1 - pos2).Length();
 	float sumOfRadius = body1->GetRadius() + body2->GetRadius();
-	return distance < sumOfRadius;
+	bool out = distance < sumOfRadius;
+
+	if (out) {
+		cReg.bodyIndex1 = i;
+		cReg.bodyIndex2 = j;
+		cReg.collisionNormal = (pos2 - pos1).Normalised();
+	}
+	return out;
 }
 
 bool NCL::CSC3222::GameSimsPhysics::CircleAABBCollision(int i, int j) //TODO define it
@@ -120,9 +127,15 @@ bool NCL::CSC3222::GameSimsPhysics::CircleAABBCollision(int i, int j) //TODO def
 	AABB* body2 = (AABB*)allColliders[j];
 	
 	Vector2 halfsize = body2->GetHalfSize();
-	Vector2 nearestEdge = Clamp(pos1, pos2 - halfsize, pos2 + halfsize);
-	float distance = (pos1 - nearestEdge).Length();
-	return distance < body1->GetRadius();
+	Vector2 nearestPoint = Clamp(pos1, pos2 - halfsize, pos2 + halfsize);
+	float distance = (pos1 - nearestPoint).Length();
+	bool out = distance < body1->GetRadius();
+	if (out) {
+		cReg.bodyIndex1 = i;
+		cReg.bodyIndex2 = j;
+		cReg.collisionNormal = (nearestPoint - pos1).Normalised();
+	}
+	return out;
 }
 
 bool NCL::CSC3222::GameSimsPhysics::AABBAABBCollision(int i, int j) //TODO define it
@@ -136,6 +149,10 @@ bool NCL::CSC3222::GameSimsPhysics::AABBAABBCollision(int i, int j) //TODO defin
 	Vector2 halfsize2 = body2->GetHalfSize();
 	bool checkX = abs(pos1.x - pos2.x) < (halfsize1.x + halfsize2.x);
 	bool checkY = abs(pos1.y - pos2.y) < (halfsize1.y + halfsize2.y);
-	return checkX && checkY;
+	bool out = checkX && checkY;
+	if (out) {
+		// define collisionRegister
+	}
+	return out;
 }
 

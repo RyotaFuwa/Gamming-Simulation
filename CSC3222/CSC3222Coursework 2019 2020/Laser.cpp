@@ -39,6 +39,7 @@ Laser::Laser(Vector2 direction, int pId) : SimObject(), playerId(pId) {
 	texture = texManager->GetTexture("bullet.png");
 
 	velocity = direction;
+	elasticity = 1;
 
 	CollisionVolume* cv = new Circle(5.0);
 	SetCollider(cv);

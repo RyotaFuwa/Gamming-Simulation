@@ -13,11 +13,7 @@ namespace NCL {
 		class TextureManager;
 		class RigidBody;
 		class CollisionVolume;
-
-		struct CollisionRegister {
-			int i; //TODO define collision info other than those in simObject
-			int j; 
-		};
+		struct CollisionRegister;
 
 		class SimObject	: public RigidBody {
 		public:

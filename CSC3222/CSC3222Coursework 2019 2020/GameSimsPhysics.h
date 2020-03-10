@@ -7,6 +7,12 @@ namespace NCL {
 		class RigidBody;
 		class CollisionVolume;
 
+		struct  CollisionRegister {
+			int bodyIndex1;
+			int bodyIndex2; // TODO add another info
+			Vector2 collisionNormal;  // body1 to body2
+		};
+
 		class GameSimsPhysics	{
 		public:
 			GameSimsPhysics();
@@ -34,11 +40,8 @@ namespace NCL {
 
 			std::vector<RigidBody*>			allBodies;
 			std::vector<CollisionVolume*>	allColliders;
+			CollisionRegister cReg;
 
-			struct  {
-				int bodyIndex1;
-				int bodyIndex2; // TODO add another info
-			} collisionRegsister;
 		};
 	}
 }
