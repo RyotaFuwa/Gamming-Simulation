@@ -22,7 +22,7 @@ namespace NCL {
 			
 			int GetPlayerId() { return playerId; }
 
-			void CollisionCallback(SimObject* other, const CollisionRegister& cReg) override;
+			bool CollisionCallback(SimObject* other, const CollisionRegister& cReg) override;
 
 		protected:
 			enum class MovementDir {

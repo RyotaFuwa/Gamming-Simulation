@@ -15,7 +15,7 @@ namespace NCL {
 			bool UpdateObject(float dt) override;
 
 			int GetPlayerId() { return playerId; }
-			void CollisionCallback(SimObject* other, const CollisionRegister& cReg) override;
+			bool CollisionCallback(SimObject* other, const CollisionRegister& cReg) override;
 		private:
 			int playerId;
 		};

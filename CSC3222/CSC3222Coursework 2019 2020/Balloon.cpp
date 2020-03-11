@@ -9,9 +9,11 @@ using namespace CSC3222;
 Balloon::Balloon() : SimObject() {
 	texture = texManager->GetTexture("TL_Creatures.png");
 	owner = nullptr;
-	springConstant = 16.0f;
+	springConstant = 32.0f;
 	naturalLength = 20.0f;
 	dampingConstant = 4.0;
+
+	inverseMass = 2;
 
 	CollisionVolume* cv = new Circle(8.0);
 	SetCollider(cv);
@@ -37,11 +39,12 @@ void Balloon::DrawObject(GameSimsRenderer& r) {
 	r.DrawTextureArea((OGLTexture*)texture, texPos, texSize, position);
 }
 
-void NCL::CSC3222::Balloon::CollisionCallback(SimObject* other, const CollisionRegister& cReg)
+bool NCL::CSC3222::Balloon::CollisionCallback(SimObject* other, const CollisionRegister& cReg)
 {
 	if (dynamic_cast<PlayerCharacter*>(other)) {
 		if (!owner) {
 			owner = (PlayerCharacter*)other;
 		}
 	}
+	return false;
 }

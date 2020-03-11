@@ -32,9 +32,8 @@ namespace NCL {
 
 			virtual void DrawObject(GameSimsRenderer &r) = 0;
 
-			virtual void CollisionCallback(SimObject* other, const CollisionRegister& cReg) {  //TODO define callback for each object
-				std::cout << "Collision Detected !! AT (";
-				std::cout << GetPosition().x << ", " << GetPosition().y << ")" << std::endl; // prottype
+			virtual bool CollisionCallback(SimObject* other, const CollisionRegister& cReg) {  //TODO define callback for each object
+				return true;
 			}
 
 			static void InitObjects(BadFoodGame* game, TextureManager* manager);

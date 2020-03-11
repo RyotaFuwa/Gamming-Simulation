@@ -3,6 +3,7 @@
 #include "../../Common/Vector2.h"
 
 namespace NCL {
+	using namespace Maths;
 	namespace CSC3222 {
 		class RigidBody;
 		class CollisionVolume;
@@ -11,6 +12,7 @@ namespace NCL {
 			int bodyIndex1;
 			int bodyIndex2; // TODO add another info
 			Vector2 collisionNormal;  // body1 to body2
+			float penetrationDepth;
 		};
 
 		class GameSimsPhysics	{
@@ -23,7 +25,7 @@ namespace NCL {
 			void AddRigidBody(RigidBody* b);
 			void RemoveRigidBody(RigidBody* b);
 
-			void AddCollider(CollisionVolume* c); //TODO what does collider mean?
+			void AddCollider(CollisionVolume* c); 
 			void RemoveCollider(CollisionVolume* c);
 
 		protected:
@@ -37,6 +39,10 @@ namespace NCL {
 			bool CircleCircleCollision(int i, int j); 
 			bool CircleAABBCollision(int i, int j);
 			bool AABBAABBCollision(int i, int j);
+
+			// collision resolution (physical aspect)
+			void Projection();
+			void Impluse();
 
 			std::vector<RigidBody*>			allBodies;
 			std::vector<CollisionVolume*>	allColliders;

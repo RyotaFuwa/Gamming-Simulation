@@ -43,7 +43,7 @@ bool PlayerCharacter::UpdateObject(float dt) {// Define how object moves
 	float constSpeed = 64; // Now it uses constant speed (64 [Length][Time]^-1).
 	// float testSpeed = 16.0 * 32.0; //cellsize * # of cells = field size. character runs from one side to the other in 1saa
 
-	float constForce = 64;
+	float constForce = 32;
 	Vector2 newForce;
 
 	currentAnimDir = MovementDir::Idle;
@@ -113,8 +113,11 @@ bool PlayerCharacter::UpdateObject(float dt) {// Define how object moves
 		position.x += constSpeed * dt;
 	}
 
+	/*
+	// moved this implementation to BadFoodGame
 	// shoot laser
 	if (Window::GetMouse()->ButtonPressed(MouseButtons::LEFT)) {
+		std::cout << "Button Held" << std::endl;
 		Vector2 mousePos = Window::GetMouse()->GetAbsolutePosition(); //TODO
 		float coordinateRatioX = game->GetCurrentMap()->GetMapWidth() / Window::GetWindow()->GetScreenSize().x;
 		float coordinateRatioY = game->GetCurrentMap()->GetMapHeight() / Window::GetWindow()->GetScreenSize().y;
@@ -125,8 +128,9 @@ bool PlayerCharacter::UpdateObject(float dt) {// Define how object moves
 		l->SetPosition(position);
 		game->AddNewObject(l);
 	}
+	*/
 
-	force = newForce;
+force = newForce;
 	return true;
 }
 
@@ -182,13 +186,15 @@ void PlayerCharacter::SetCharacterType(CharacterType t) {
 	}
 }
 
-void NCL::CSC3222::PlayerCharacter::CollisionCallback( SimObject* other, const CollisionRegister& cReg)
+bool NCL::CSC3222::PlayerCharacter::CollisionCallback(SimObject* other, const CollisionRegister& cReg)
 {
 	if (dynamic_cast<Laser*>(other)) {
 		Laser* laser = (Laser*)other;
 		if (playerId != laser->GetPlayerId()) {
-			std::cout << "Laser Hit !! AT (";
-			std::cout << GetPosition().x << ", " << GetPosition().y << ")" << std::endl; // prottype
+			return false;
+		}
+		else {
+			return false;
 		}
 	}
 	else if(dynamic_cast<Balloon*>(other)) {
@@ -196,9 +202,14 @@ void NCL::CSC3222::PlayerCharacter::CollisionCallback( SimObject* other, const C
 		if (!balloon->GetOwner()) {
 			std::cout << "Get Balloon !! AT (";
 			NumOfBalloons++;
+			return false;
 		}
 	}
 	else if (dynamic_cast<Food*>(other)) {
 			std::cout << "Get Food !! AT (";
+			return false;
+	}
+	else {
+		return true;
 	}
 }

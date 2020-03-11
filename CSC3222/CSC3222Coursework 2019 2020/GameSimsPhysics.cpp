@@ -2,7 +2,6 @@
 #include "RigidBody.h"
 #include "SimObject.h"
 #include "CollisionVolume.h"
-#include "../../Common/Vector2.h"
 #include "..//..//Common/Maths.h"
 
 using namespace NCL;
@@ -62,6 +61,7 @@ void NCL::CSC3222::GameSimsPhysics::IntegrateVelocity(float dt)
 	for (auto each : allBodies) { // change position by integrating the velocity
 		each->position += each->velocity * dt;
 		each->velocity *= 0.999f; // bit inaccurate for air resistance
+		
 	}
 }
 
@@ -69,10 +69,17 @@ void GameSimsPhysics::HandleCollision(float dt) {
 	for (unsigned int i = 0; i < allColliders.size(); i++) {
 		for (int j = i + 1; j < allColliders.size(); j++) {
 			if (CollideCheck(i, j)) {
+				// logical collision resolution
 				SimObject* body1 = (SimObject*)allBodies[i];
 				SimObject* body2 = (SimObject*)allBodies[j];
-				body1->CollisionCallback(body2, cReg); //TODO Resolve collision by calling callback defined in object class
-				body2->CollisionCallback(body1, cReg); //TODO Resolve collision by calling callback defined in object class
+				bool b1 = body1->CollisionCallback(body2, cReg); //TODO Resolve collision by calling callback defined in object class
+				bool b2 = body2->CollisionCallback(body1, cReg); //TODO Resolve collision by calling callback defined in object class
+
+				// physical collision resolution
+				if (b1 && b2) {
+					Projection();
+					Impluse();
+				}
 			}
 		}
 	}
@@ -115,6 +122,7 @@ bool NCL::CSC3222::GameSimsPhysics::CircleCircleCollision(int i, int j)
 		cReg.bodyIndex1 = i;
 		cReg.bodyIndex2 = j;
 		cReg.collisionNormal = (pos2 - pos1).Normalised();
+		cReg.penetrationDepth = sumOfRadius - distance;
 	}
 	return out;
 }
@@ -134,6 +142,7 @@ bool NCL::CSC3222::GameSimsPhysics::CircleAABBCollision(int i, int j) //TODO def
 		cReg.bodyIndex1 = i;
 		cReg.bodyIndex2 = j;
 		cReg.collisionNormal = (nearestPoint - pos1).Normalised();
+		cReg.penetrationDepth = body1->GetRadius() - distance;
 	}
 	return out;
 }
@@ -147,12 +156,38 @@ bool NCL::CSC3222::GameSimsPhysics::AABBAABBCollision(int i, int j) //TODO defin
 
 	Vector2 halfsize1 = body1->GetHalfSize();
 	Vector2 halfsize2 = body2->GetHalfSize();
-	bool checkX = abs(pos1.x - pos2.x) < (halfsize1.x + halfsize2.x);
-	bool checkY = abs(pos1.y - pos2.y) < (halfsize1.y + halfsize2.y);
+	float depthX = (halfsize1.x + halfsize2.x) - abs(pos1.x - pos2.x);
+	float depthY = (halfsize1.y + halfsize2.y) - abs(pos1.y - pos2.y);
+	bool checkX = depthX > 0;
+	bool checkY = depthY > 0;
 	bool out = checkX && checkY;
 	if (out) {
-		// define collisionRegister
+		cReg.bodyIndex1 = i;
+		cReg.bodyIndex2 = j;
+		cReg.collisionNormal = depthX < depthY ? Vector2(1, 0) : Vector2(0, 1);
+		cReg.penetrationDepth = depthX < depthY ? depthX : depthY;
 	}
 	return out;
+}
+
+void NCL::CSC3222::GameSimsPhysics::Projection()
+{
+	RigidBody* body1 = allBodies[cReg.bodyIndex1];
+	RigidBody* body2 = allBodies[cReg.bodyIndex2];
+
+	float inverseMassTotal = body1->inverseMass + body2->inverseMass;
+	body1->position -= cReg.collisionNormal * cReg.penetrationDepth * body1->inverseMass / inverseMassTotal;
+	body2->position += cReg.collisionNormal * cReg.penetrationDepth * body2->inverseMass / inverseMassTotal;
+}
+
+void NCL::CSC3222::GameSimsPhysics::Impluse()
+{
+	RigidBody* body1 = allBodies[cReg.bodyIndex1];
+	RigidBody* body2 = allBodies[cReg.bodyIndex2];
+	float inverseMassTotal = body1->inverseMass + body2->inverseMass;
+	Vector2 relativeVec = body2->velocity - body1->velocity;
+	float J = Vector2::Dot(relativeVec, cReg.collisionNormal) / inverseMassTotal;
+	body1->velocity -= cReg.collisionNormal * -(1 + body1->elasticity) * J * body1->inverseMass;
+	body2->velocity += cReg.collisionNormal * -(1 + body2->elasticity) * J * body2->inverseMass;
 }
 

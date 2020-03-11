@@ -8,6 +8,7 @@
 #include "../../Common/Vector4.h"
 
 #include "PlayerCharacter.h"
+#include "BadRobot.h"
 #include "CollisionVolume.h"
 
 using namespace NCL;
@@ -81,19 +82,26 @@ bool Laser::UpdateObject(float dt) {
 	return true;
 }
 
-void NCL::CSC3222::Laser::CollisionCallback(SimObject* other, const CollisionRegister& cReg)
+bool NCL::CSC3222::Laser::CollisionCallback(SimObject* other, const CollisionRegister& cReg)
 {
-	PlayerCharacter* pObj = (PlayerCharacter*)other;
-	if (pObj) {
+	if (dynamic_cast<PlayerCharacter*>(other)) {
+		PlayerCharacter* pObj = (PlayerCharacter*)other;
 		if (playerId == pObj->GetPlayerId()) {
 		}
 		else {
 			std::cout << "Laser Hit Player !! AT (";
 			std::cout << GetPosition().x << ", " << GetPosition().y << ")" << std::endl; // prottype
+			return false;
 		}
+	}
+	else if (dynamic_cast<BadRobot*>(other)) {
+			std::cout << "Laser Hit Player !! AT (";
+			std::cout << GetPosition().x << ", " << GetPosition().y << ")" << std::endl; // prottype
+			return false;
 	}
 	else {
 		std::cout << "Laser Hit!! AT (";
 		std::cout << GetPosition().x << ", " << GetPosition().y << ")" << std::endl; // prottype
+		return true;
 	}
 }

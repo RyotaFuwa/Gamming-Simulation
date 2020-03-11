@@ -38,12 +38,13 @@ void Food::DrawObject(GameSimsRenderer& r) {
 	r.DrawTextureArea((OGLTexture*)texture, texPos, texSize, position);
 }
 
-void NCL::CSC3222::Food::CollisionCallback(SimObject* other, const CollisionRegister& cReg)
+bool NCL::CSC3222::Food::CollisionCallback(SimObject* other, const CollisionRegister& cReg)
 {
 	if (dynamic_cast<PlayerCharacter*>(other)) {
 		eaten = true;
-		std::cout << "Eaten By Player !! AT (";
-		std::cout << GetPosition().x << ", " << GetPosition().y << ")" << std::endl; // prottype
-
+		return false;
+	}
+	else {
+		return true;
 	}
 }

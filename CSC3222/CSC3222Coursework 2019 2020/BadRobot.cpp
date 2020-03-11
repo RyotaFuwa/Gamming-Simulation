@@ -66,3 +66,8 @@ void BadRobot::DrawObject(GameSimsRenderer& r) {
 
 	r.DrawTextureArea((OGLTexture*)texture, texPos, texSize, position, false);
 }
+
+bool NCL::CSC3222::BadRobot::CollisionCallback(SimObject* other, const CollisionRegister& cReg)
+{
+	return true;
+}

@@ -78,6 +78,22 @@ void BadFoodGame::Update(float dt) {
 	renderer->DrawString("Coins: " + std::to_string(coins), Vector2(10, 70));
 	renderer->DrawString("Balloons: " + std::to_string(balloons), Vector2(10, 90));
 
+	// shoot laser
+	if (Window::GetMouse()->ButtonPressed(MouseButtons::LEFT)) {
+		std::cout << "Button Held" << std::endl;
+		Vector2 mousePos = Window::GetMouse()->GetAbsolutePosition(); //TODO
+		float coordinateRatioX = currentMap->GetMapWidth() / Window::GetWindow()->GetScreenSize().x;
+		float coordinateRatioY = currentMap->GetMapHeight() / Window::GetWindow()->GetScreenSize().y;
+		mousePos.x *= cellsize * coordinateRatioX;
+		mousePos.y *= cellsize * coordinateRatioY;
+		Vector2 pPos = player->GetPosition();
+		Vector2 dir = mousePos - pPos;
+		Laser* l = new Laser(dir.Normalised() * 200, player->GetPlayerId());
+		l->SetPosition(pPos);
+		AddNewObject(l);
+	}
+
+
 
 	/*
 
@@ -110,7 +126,7 @@ void BadFoodGame::Update(float dt) {
 	}
 
 	// debug tool
-	if (Window::GetMouse()->ButtonHeld(MouseButtons::RIGHT)) {
+	if (Window::GetMouse()->ButtonPressed(MouseButtons::RIGHT)) {
 		Vector2 mousePos = Window::GetMouse()->GetAbsolutePosition(); //TODO
 		float coordinateRatioX = currentMap->GetMapWidth() / Window::GetWindow()->GetScreenSize().x;
 		float coordinateRatioY = currentMap->GetMapHeight() / Window::GetWindow()->GetScreenSize().y;

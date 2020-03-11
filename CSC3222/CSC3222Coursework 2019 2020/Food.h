@@ -12,7 +12,7 @@ namespace NCL {
 
 			bool UpdateObject(float dt) override;
 			void DrawObject(GameSimsRenderer& r) override;
-			void CollisionCallback(SimObject* other, const CollisionRegister& cReg) override;
+			bool CollisionCallback(SimObject* other, const CollisionRegister& cReg) override;
 
 		protected:
 			int foodItem;
