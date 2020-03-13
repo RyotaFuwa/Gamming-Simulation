@@ -5,10 +5,15 @@
 namespace NCL {
 	using namespace Maths;
 	namespace CSC3222 {
+		enum class State {
+			ACTIVE,
+			SLEEP,
+			STATIC
+		};
 		class RigidBody	{
 			friend class GameSimsPhysics;
 		public:
-			RigidBody();
+			RigidBody(State s);
 			~RigidBody();
 
 			Vector2 GetPosition() const {
@@ -35,14 +40,31 @@ namespace NCL {
 				force = Vector2(0, 0);
 			}
 
+			void SetCollider(CollisionVolume * c) { //TODO call setCollider in constructor of each object
+				c->SetPos(&position);
+				collider = c;
+			}
+
+			CollisionVolume* GetCollider() const {
+				return collider;
+			}
+			State GetState() {
+				return state;
+			}
+
+			void SetState(State s) {
+				state = s;
+			}
+
 		protected:
 			Vector2 position;
 			Vector2 velocity;
 			Vector2 force;
-
 			float inverseMass;
 			float elasticity;
+
 			CollisionVolume* collider;
+			State state;
 
 		};
 	}

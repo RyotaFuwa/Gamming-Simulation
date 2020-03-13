@@ -22,6 +22,7 @@ namespace NCL {
 			float springConstant;
 			float naturalLength;
 			float dampingConstant;
+			bool cracked;
 		};
 	}
 }

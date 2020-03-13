@@ -6,11 +6,8 @@ namespace NCL {
 		class StaticObstacle : public SimObject
 		{
 		public:
-			StaticObstacle(Vector2 pos, CollisionVolume* cv) {
-				position = pos;
-				collider = cv;
-				inverseMass = 0;
-			}
+			StaticObstacle(Vector2 pos, CollisionVolume* cv);
+			~StaticObstacle();
 			void DrawObject(GameSimsRenderer& r) override {};
 			bool UpdateObject(float dt) override { return true; };
 			bool CollisionCallback(SimObject* other, const CollisionRegister& cReg) override;

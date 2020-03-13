@@ -17,22 +17,14 @@ namespace NCL {
 
 		class SimObject	: public RigidBody {
 		public:
-			SimObject();
+			SimObject(State s);
 			~SimObject();
-
-			void SetCollider(CollisionVolume * c) { //TODO call setCollider in constructor of each object
-				collider = c;
-			}
-
-			CollisionVolume* GetCollider() const {
-				return collider;
-			}
 
 			virtual bool UpdateObject(float dt) = 0;
 
 			virtual void DrawObject(GameSimsRenderer &r) = 0;
 
-			virtual bool CollisionCallback(SimObject* other, const CollisionRegister& cReg) {  //TODO define callback for each object
+			virtual bool CollisionCallback(SimObject* other, const CollisionRegister& cReg) {  //return true if physical resolution is needed
 				return true;
 			}
 

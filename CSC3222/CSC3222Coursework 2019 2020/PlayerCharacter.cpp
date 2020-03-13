@@ -24,11 +24,12 @@ bool charBFlips[]	= { false, true, true, false, false };
 
 int PlayerCharacter::NumOfPlayers = 1;
 
-PlayerCharacter::PlayerCharacter() : SimObject(), playerId(NumOfPlayers) {
+PlayerCharacter::PlayerCharacter() : SimObject(State::ACTIVE), playerId(NumOfPlayers) {
 	currentAnimDir		= MovementDir::Left;
 	SetCharacterType(CharacterType::TYPE_A);
 
 	CollisionVolume* cv = new Circle(7.5f); // determined by looking at the character size on screen
+	cv->SetPos(&position);
 	SetCollider(cv);
 
 	NumOfPlayers++;
@@ -200,13 +201,11 @@ bool NCL::CSC3222::PlayerCharacter::CollisionCallback(SimObject* other, const Co
 	else if(dynamic_cast<Balloon*>(other)) {
 		Balloon* balloon = (Balloon*)other;
 		if (!balloon->GetOwner()) {
-			std::cout << "Get Balloon !! AT (";
 			NumOfBalloons++;
 			return false;
 		}
 	}
 	else if (dynamic_cast<Food*>(other)) {
-			std::cout << "Get Food !! AT (";
 			return false;
 	}
 	else {

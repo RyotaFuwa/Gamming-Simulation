@@ -60,6 +60,8 @@ void BadFoodGame::Update(float dt) {
 		currentMap->DrawMap(*renderer);
 		for (auto i = gameObjects.begin(); i != gameObjects.end(); ) {
 			if (!(*i)->UpdateObject(graphicsFixedDeltaTime)) { //object has said its finished with
+				physics->RemoveCollider((*i)->GetCollider());
+				physics->RemoveRigidBody((RigidBody*)(*i));
 				delete (*i);
 				i = gameObjects.erase(i);
 			}
@@ -88,7 +90,7 @@ void BadFoodGame::Update(float dt) {
 		mousePos.y *= cellsize * coordinateRatioY;
 		Vector2 pPos = player->GetPosition();
 		Vector2 dir = mousePos - pPos;
-		Laser* l = new Laser(dir.Normalised() * 200, player->GetPlayerId());
+		Laser* l = new Laser(dir.Normalised() * 300, player->GetPlayerId());
 		l->SetPosition(pPos);
 		AddNewObject(l);
 	}
@@ -111,6 +113,7 @@ void BadFoodGame::Update(float dt) {
 	renderer->DrawBox(Vector2(176, 76), Vector2(48, 12), Vector4(1, 0, 0, 1));
 	*/
 
+	/*
 	// collision debug
 	for (auto obj : gameObjects) {
 		CollisionVolume* collider = obj->GetCollider();
@@ -124,7 +127,9 @@ void BadFoodGame::Update(float dt) {
 			renderer->DrawCircle(obj->GetPosition(), circle->GetRadius(), Vector4(0, 1, 0, 1));
 		}
 	}
+	*/
 
+	/*
 	// debug tool
 	if (Window::GetMouse()->ButtonPressed(MouseButtons::RIGHT)) {
 		Vector2 mousePos = Window::GetMouse()->GetAbsolutePosition(); //TODO
@@ -136,6 +141,7 @@ void BadFoodGame::Update(float dt) {
 		renderer->DrawBox(pos, Vector2(cellsize/2.0, cellsize/2.0), Vector4(1, 0, 0, 1));
 		std::cout << pos << std::endl;
 	}
+	*/
 		renderer->Render();
 }
 
@@ -186,6 +192,7 @@ void BadFoodGame::InitialiseGame() {
 	AddNewObject(testBalloon);
 
 	*/
+
 	Food* testFood = new Food();
 	testFood->SetPosition(Vector2(250, 200));
 	AddNewObject(testFood);

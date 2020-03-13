@@ -10,6 +10,8 @@
 #include "PlayerCharacter.h"
 #include "BadRobot.h"
 #include "CollisionVolume.h"
+#include "StaticObstacle.h"
+#include "Balloon.h"
 
 using namespace NCL;
 using namespace CSC3222;
@@ -36,13 +38,17 @@ Vector4 frames[16] = {
 	Vector4(1, 50, 15, 8)
 };
 
-Laser::Laser(Vector2 direction, int pId) : SimObject(), playerId(pId) {
+Laser::Laser(Vector2 direction, int pId) : SimObject(State::SLEEP), playerId(pId) {
 	texture = texManager->GetTexture("bullet.png");
+
+	attackPower = 30;
+	hitCount = 0;
 
 	velocity = direction;
 	elasticity = 1;
 
 	CollisionVolume* cv = new Circle(5.0);
+	cv->SetPos(&position);
 	SetCollider(cv);
 }
 
@@ -79,7 +85,7 @@ void Laser::DrawObject(GameSimsRenderer &r) {
 }
 
 bool Laser::UpdateObject(float dt) {
-	return true;
+	return hitCount < 4;
 }
 
 bool NCL::CSC3222::Laser::CollisionCallback(SimObject* other, const CollisionRegister& cReg)
@@ -87,21 +93,34 @@ bool NCL::CSC3222::Laser::CollisionCallback(SimObject* other, const CollisionReg
 	if (dynamic_cast<PlayerCharacter*>(other)) {
 		PlayerCharacter* pObj = (PlayerCharacter*)other;
 		if (playerId == pObj->GetPlayerId()) {
+			return false;
 		}
 		else {
-			std::cout << "Laser Hit Player !! AT (";
-			std::cout << GetPosition().x << ", " << GetPosition().y << ")" << std::endl; // prottype
+			hitCount += 4;
 			return false;
 		}
 	}
 	else if (dynamic_cast<BadRobot*>(other)) {
-			std::cout << "Laser Hit Player !! AT (";
-			std::cout << GetPosition().x << ", " << GetPosition().y << ")" << std::endl; // prottype
-			return false;
+		hitCount += 4;
+		return false;
 	}
-	else {
-		std::cout << "Laser Hit!! AT (";
-		std::cout << GetPosition().x << ", " << GetPosition().y << ")" << std::endl; // prottype
+	else if (dynamic_cast<StaticObstacle*>(other)){
+		hitCount++;
 		return true;
 	}
+	else if (dynamic_cast<Laser*>(other)) {
+		return false;
+	}
+	else if (dynamic_cast<Balloon*>(other)) {
+		Balloon* b = (Balloon*)other;
+		if (!b->GetOwner()) {
+			hitCount += 4;
+			return false;
+		}
+	}
+	else {
+		hitCount += 4;
+		return true;
+	}
+	
 }

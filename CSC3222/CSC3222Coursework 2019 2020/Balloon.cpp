@@ -2,13 +2,15 @@
 #include "TextureManager.h"
 #include "GameSimsRenderer.h"
 #include "CollisionVolume.h"
+#include "Laser.h"
 
 using namespace NCL;
 using namespace CSC3222;
 
-Balloon::Balloon() : SimObject() {
+Balloon::Balloon() : SimObject(State::SLEEP) {
 	texture = texManager->GetTexture("TL_Creatures.png");
 	owner = nullptr;
+	cracked = false;
 	springConstant = 32.0f;
 	naturalLength = 20.0f;
 	dampingConstant = 4.0;
@@ -16,6 +18,7 @@ Balloon::Balloon() : SimObject() {
 	inverseMass = 2;
 
 	CollisionVolume* cv = new Circle(8.0);
+	cv->SetPos(&position);
 	SetCollider(cv);
 }
 
@@ -30,7 +33,7 @@ bool Balloon::UpdateObject(float dt) {
 		Vector2 distance = relativePos.Normalised() * deltaX;
 		force = -distance * springConstant -velocity * dampingConstant;
 	}
-	return true;
+	return !cracked;
 }
 
 void Balloon::DrawObject(GameSimsRenderer& r) {
@@ -46,5 +49,20 @@ bool NCL::CSC3222::Balloon::CollisionCallback(SimObject* other, const CollisionR
 			owner = (PlayerCharacter*)other;
 		}
 	}
-	return false;
+	else if (dynamic_cast<Laser*>(other)) {
+		Laser* l = (Laser*)other;
+		if (!owner) {
+			cracked = true;
+			return false;
+		}
+		else if (owner->GetPlayerId() != l->GetPlayerId()) {
+			cracked = true;
+		}
+		else {
+			return false;
+		}
+	}
+	else {
+		return false;
+	}
 }

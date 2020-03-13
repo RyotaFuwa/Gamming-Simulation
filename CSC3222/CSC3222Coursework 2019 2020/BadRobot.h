@@ -19,6 +19,7 @@ namespace NCL {
 				White,
 			};
 			RobotType type;
+			int stamina;
 		};
 	}
 }

@@ -2,6 +2,7 @@
 #include "TextureManager.h"
 #include "GameSimsRenderer.h"
 #include "CollisionVolume.h"
+#include "Laser.h"
 
 using namespace NCL;
 using namespace CSC3222;
@@ -22,7 +23,7 @@ Vector4 animFramesWhite[] = {
 	Vector4(200,264,17,23)
 };
 
-BadRobot::BadRobot() : SimObject() {
+BadRobot::BadRobot() : SimObject(State::ACTIVE) {
 	texture = texManager->GetTexture("TL_Creatures.png");
 	animFrameCount	= 4;
 
@@ -30,12 +31,15 @@ BadRobot::BadRobot() : SimObject() {
 
 	if (r == 0) {
 		type = RobotType::Green;
+		stamina = 30;
 	}
 	else {
 		type = RobotType::White;
+		stamina = 90;
 	}
 
 	CollisionVolume* cv = new Circle(8.0);
+	cv->SetPos(&position);
 	SetCollider(cv);
 }
 
@@ -69,5 +73,13 @@ void BadRobot::DrawObject(GameSimsRenderer& r) {
 
 bool NCL::CSC3222::BadRobot::CollisionCallback(SimObject* other, const CollisionRegister& cReg)
 {
-	return true;
+	if (dynamic_cast<Laser*>(other)) {
+		Laser* laser = (Laser*)other;
+		stamina -= laser->GetAttackPower();
+	}
+
+	if (stamina > 0)
+		return true;
+	else
+		return false;
 }

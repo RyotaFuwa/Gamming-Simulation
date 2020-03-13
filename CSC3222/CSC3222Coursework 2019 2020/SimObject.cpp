@@ -7,7 +7,7 @@ using namespace CSC3222;
 TextureManager*  SimObject::texManager = nullptr;
 BadFoodGame* SimObject::game = nullptr;
 
-SimObject::SimObject()	{
+SimObject::SimObject(State s): RigidBody(s)	{
 	texture		= nullptr;
 	collider	= nullptr;
 

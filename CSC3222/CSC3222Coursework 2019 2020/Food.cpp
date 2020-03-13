@@ -2,6 +2,7 @@
 #include "TextureManager.h"
 #include "GameSimsRenderer.h"
 #include "CollisionVolume.h"
+#include "Laser.h"
 
 using namespace NCL;
 using namespace CSC3222;
@@ -14,13 +15,14 @@ Vector4 foodFrames[] = {
 	Vector4(64,0,16,16) //Bread
 };
 
-Food::Food() : SimObject() {
+Food::Food() : SimObject(State::SLEEP) {
 	texture = texManager->GetTexture("food_items16x16.png");
 
 	foodItem = rand() % 5;
 	eaten = false;
 
 	CollisionVolume* cv = new Circle(8.0);
+	cv->SetPos(&position);
 	SetCollider(cv);
 }
 
@@ -28,8 +30,7 @@ Food::~Food() {
 }
 
 bool Food::UpdateObject(float dt) {
-	// return !eaten; //TODO implement deleting objects
-	return true;
+	return !eaten;
 }
 
 void Food::DrawObject(GameSimsRenderer& r) {
@@ -41,6 +42,10 @@ void Food::DrawObject(GameSimsRenderer& r) {
 bool NCL::CSC3222::Food::CollisionCallback(SimObject* other, const CollisionRegister& cReg)
 {
 	if (dynamic_cast<PlayerCharacter*>(other)) {
+		eaten = true;
+		return false;
+	}
+	else if (dynamic_cast<Laser*>(other)) {
 		eaten = true;
 		return false;
 	}

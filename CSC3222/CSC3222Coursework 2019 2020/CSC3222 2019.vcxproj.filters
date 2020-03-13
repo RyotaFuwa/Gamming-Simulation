@@ -66,7 +66,7 @@
       <Filter>Objects</Filter>
     </ClCompile>
     <ClCompile Include="StaticObstacle.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Objects</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -116,7 +116,7 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="StaticObstacle.h">
-      <Filter>Header Files</Filter>
+      <Filter>Objects</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
