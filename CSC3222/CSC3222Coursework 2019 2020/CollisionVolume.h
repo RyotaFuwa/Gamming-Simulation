@@ -1,9 +1,13 @@
 #pragma once
-#include "..//..//Common/Vector2.h"
+#include "../../Common/Vector2.h"
 
 namespace NCL {
 	using namespace Maths;
 	namespace CSC3222 {
+		struct  CollisionRegister {
+			Vector2 collisionNormal;  // body1 to body2
+			float penetrationDepth;
+		};
 
 		class CollisionVolume {
 		public:
@@ -12,9 +16,10 @@ namespace NCL {
 			virtual Vector2 GetHalfSize() const = 0;  // all colliders are supposed to be tested as AABB in broad phase
 
 			Vector2 GetPos() const { return *pos; }
-			void SetPos(Vector2* p) { pos = p; }
+			void SetPos(Vector2 *p) { pos = p; } // sharing position from rigid body
+
 		protected:
-			Vector2* pos = nullptr;
+			Vector2 *pos = nullptr;
 		};
 
 

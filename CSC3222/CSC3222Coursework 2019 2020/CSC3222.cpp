@@ -11,7 +11,7 @@ using namespace CSC3222;
 using namespace Random;
 
 
-// TODO broad phase and narrow phase
+// TODO fix a big lag in broadphase
 int main() {
 	Window*w = Window::CreateGameWindow("CSC3222 - B4DF00D!", 1120, 768);
 

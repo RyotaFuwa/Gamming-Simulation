@@ -1,6 +1,4 @@
 #include "GameSimsPhysics.h"
-#include "RigidBody.h"
-#include "SimObject.h"
 #include "..//..//Common/Maths.h"
 
 using namespace NCL;
@@ -8,10 +6,14 @@ using namespace CSC3222;
 
 
 GameSimsPhysics::GameSimsPhysics()	{
-	root = new QuadTreeNode() // TODO
 }
 
 GameSimsPhysics::~GameSimsPhysics()	{
+}
+
+void NCL::CSC3222::GameSimsPhysics::InitialiseQuadTree(const Vector2 &mapCenter, const Vector2 &mapHalfSize)
+{
+	root = new QuadTreeNode(mapCenter, mapHalfSize, 2, 5, allStaticBodies);
 }
 
 void GameSimsPhysics::Update(float dt) {
@@ -23,33 +25,23 @@ void GameSimsPhysics::Update(float dt) {
 }
 
 void GameSimsPhysics::AddRigidBody(RigidBody* b) {
-	allBodies.emplace_back(b);
+	if(b->state == State::STATIC)
+		allStaticBodies.emplace_back(b);
+	else
+		allDynamicBodies.emplace_back(b);
 }
 
 void GameSimsPhysics::RemoveRigidBody(RigidBody* b) {
-	auto at = std::find(allBodies.begin(), allBodies.end(), b);
-	if (at != allBodies.end()) {
-		//maybe delete too?
-		allBodies.erase(at);
+	vector<RigidBody*> &vec = b->state == State::STATIC ? allStaticBodies : allDynamicBodies;
+	auto at = std::find(vec.begin(), vec.end(), b);
+	if (at != vec.end()) {
+		vec.erase(at);
 	}
 }
-
-void GameSimsPhysics::AddCollider(CollisionVolume* c) {
-	allColliders.emplace_back(c);
-}
-
-void GameSimsPhysics::RemoveCollider(CollisionVolume* c) {
-	auto at = std::find(allColliders.begin(), allColliders.end(), c);
-	if (at != allColliders.end()) {
-		//maybe delete too?
-		allColliders.erase(at);
-	}
-}
-
 
 void NCL::CSC3222::GameSimsPhysics::IntegrateAcceleration(float dt)
 {
-	for (auto each : allBodies) { // acceleration(use appropriate numerical approximation for v = a * dt)
+	for (auto each : allDynamicBodies) { // acceleration(use appropriate numerical approximation for v = a * dt)
 		Vector2 acceleration = each->force * each->inverseMass;
 		each->velocity += acceleration * dt;
 	}
@@ -57,7 +49,7 @@ void NCL::CSC3222::GameSimsPhysics::IntegrateAcceleration(float dt)
 
 void NCL::CSC3222::GameSimsPhysics::IntegrateVelocity(float dt)
 {
-	for (auto each : allBodies) { // change position by integrating the velocity
+	for (auto each : allDynamicBodies) { // change position by integrating the velocity
 		each->position += each->velocity * dt;
 		each->velocity *= 0.999f; // bit inaccurate for air resistance
 		
@@ -65,22 +57,31 @@ void NCL::CSC3222::GameSimsPhysics::IntegrateVelocity(float dt)
 }
 
 void GameSimsPhysics::HandleCollision(float dt) {
-
 	// broad phase
-	vector<CollisionPair> collisionPairs = GetCollisionPair();
+	// vector<BodyPairs> bpairs = BroadPhase();
+	vector<BodyPairs> bpairs;
+	for (auto sbody : allStaticBodies) {
+		for (auto dbody : allDynamicBodies) {
+			BodyPairs bp;
+			bp.body1 = sbody;
+			bp.body2 = dbody;
+			bpairs.push_back(bp);
+		}
+	}
+
+	for (int i = 0; i != allDynamicBodies.size(); i++) {
+		for (int j = i + 1; j != allDynamicBodies.size(); j++) {
+			BodyPairs bp;
+			bp.body1 = allDynamicBodies[i];
+			bp.body2 = allDynamicBodies[j];
+			bpairs.push_back(bp);
+		}
+	}
 
 	// narrow phase (direct checking)
-	for (auto pair : collisionPairs) {
-		if (CollisionCheck(pair.body1->GetCollider(), pair.body2->GetCollider())) {
-
-			// logical collision resolution
-			SimObject* obj1 = (SimObject*)(pair.body1);
-			SimObject* obj2 = (SimObject*)(pair.body2);
-			bool b1 = obj1->CollisionCallback(obj2, cReg); //TODO Resolve collision by calling callback defined in object class
-			bool b2 = obj2->CollisionCallback(obj1, cReg); //TODO Resolve collision by calling callback defined in object class
-
-			// physical collision resolution
-			if (b1 && b2) {
+	for (auto pair : bpairs) {
+		if (NarrowPhase(pair.body1->GetCollider(), pair.body2->GetCollider())) {
+			if (CollisionResolution((SimObject*)(pair.body1), (SimObject*)(pair.body2))) {
 				Projection(pair.body1, pair.body2);
 				Impluse(pair.body1, pair.body2);
 			}
@@ -88,15 +89,16 @@ void GameSimsPhysics::HandleCollision(float dt) {
 	}
 }
 
-vector<CollisionPair> NCL::CSC3222::GameSimsPhysics::GetCollisionPairs()
+std::vector<BodyPairs> GameSimsPhysics::BroadPhase()
 {
-	allCollisionPairs.clear();
-
-	return allCollisionPairs;
-
+	root->Refresh();
+	for (RigidBody* body : allDynamicBodies) {
+		root->Insert(body);
+	}
+	return root->RetriveCollisionPairs();
 }
 
-bool NCL::CSC3222::GameSimsPhysics::CollisionCheck(CollisionVolume* body1, CollisionVolume* body2)
+bool NCL::CSC3222::GameSimsPhysics::NarrowPhase(CollisionVolume* body1, CollisionVolume* body2)
 {
 	if (dynamic_cast<Circle*>(body1)) {
 		if (dynamic_cast<Circle*>(body2))
@@ -108,7 +110,7 @@ bool NCL::CSC3222::GameSimsPhysics::CollisionCheck(CollisionVolume* body1, Colli
 	}
 	else if (dynamic_cast<AABB*>(body1)) {
 		if (dynamic_cast<Circle*>(body2))
-			return CircleAABBCollision((Circle*)body2, (AABB*)body1);
+			return ABBCircleCollision((AABB*)body1, (Circle*)body2);
 		else if (dynamic_cast<AABB*>(body2))
 			return AABBAABBCollision((AABB*)body1, (AABB*)body2);
 		else
@@ -134,7 +136,7 @@ bool NCL::CSC3222::GameSimsPhysics::CircleCircleCollision(Circle* circle1, Circl
 	return out;
 }
 
-bool NCL::CSC3222::GameSimsPhysics::CircleAABBCollision(Circle* circle, AABB* aabb) //TODO define it
+bool NCL::CSC3222::GameSimsPhysics::CircleAABBCollision(Circle* circle, AABB* aabb) //TODO define swap version
 {
 	Vector2 pos1 = circle->GetPos();
 	Vector2 pos2 = aabb->GetPos();
@@ -149,7 +151,16 @@ bool NCL::CSC3222::GameSimsPhysics::CircleAABBCollision(Circle* circle, AABB* aa
 	return out;
 }
 
-bool NCL::CSC3222::GameSimsPhysics::AABBAABBCollision(AABB* aabb1, AABB* aabb2) //TODO define it
+bool NCL::CSC3222::GameSimsPhysics::ABBCircleCollision(AABB* aabb, Circle* circle)
+{
+	bool out = CircleAABBCollision(circle, aabb);
+	if (out) {
+		cReg.collisionNormal = -cReg.collisionNormal;
+	}
+	return out;
+}
+
+bool NCL::CSC3222::GameSimsPhysics::AABBAABBCollision(AABB* aabb1, AABB* aabb2) 
 {
 	Vector2 pos1 = aabb1->GetPos();
 	Vector2 pos2 = aabb2->GetPos();
@@ -165,6 +176,13 @@ bool NCL::CSC3222::GameSimsPhysics::AABBAABBCollision(AABB* aabb1, AABB* aabb2) 
 		cReg.penetrationDepth = depthX < depthY ? depthX : depthY;
 	}
 	return out;
+}
+
+bool NCL::CSC3222::GameSimsPhysics::CollisionResolution(SimObject* obj1, SimObject* obj2)
+{
+	bool b1 = obj1->CollisionCallback(obj2, cReg); 
+	bool b2 = obj2->CollisionCallback(obj1, cReg);
+	return b1 && b2;
 }
 
 void NCL::CSC3222::GameSimsPhysics::Projection(RigidBody* body1, RigidBody* body2)

@@ -24,10 +24,4 @@ NCL::CSC3222::Circle::~Circle()
 {
 }
 
-NCL::CSC3222::AABB NCL::CSC3222::Circle::GetAABB() const
-{
-	AABB aabb(Vector2(radius, radius));
-	aabb.SetPos(pos);
-	return aabb;
-}
 

@@ -60,8 +60,7 @@ void BadFoodGame::Update(float dt) {
 		currentMap->DrawMap(*renderer);
 		for (auto i = gameObjects.begin(); i != gameObjects.end(); ) {
 			if (!(*i)->UpdateObject(graphicsFixedDeltaTime)) { //object has said its finished with
-				physics->RemoveCollider((*i)->GetCollider());
-				physics->RemoveRigidBody((RigidBody*)(*i));
+				physics->RemoveRigidBody((*i));
 				delete (*i);
 				i = gameObjects.erase(i);
 			}
@@ -163,6 +162,10 @@ void BadFoodGame::InitialiseGame() {
 	AddStaticObstacle("Walls.txt");
 	AddStaticObstacle("OtherObstacles.txt");
 
+	Vector2 mapHalfSize = Vector2(currentMap->GetMapWidth(), currentMap->GetMapHeight()) * cellsize / 2.0;
+	Vector2 &mapCenter = mapHalfSize;
+	physics->InitialiseQuadTree(mapCenter, mapHalfSize);
+
 	player = new PlayerCharacter();
 	player->SetCharacterType(PlayerCharacter::CharacterType::TYPE_B);
 	player->SetPosition(Vector2(200, 200));
@@ -217,9 +220,6 @@ void BadFoodGame::InitialiseGame() {
 void BadFoodGame::AddNewObject(SimObject* object) {
 	newObjects.emplace_back(object);
 	physics->AddRigidBody(object);
-	if (object->GetCollider()) {
-		physics->AddCollider(object->GetCollider());
-	}
 }
 
 void NCL::CSC3222::BadFoodGame::AddStaticObstacle(const std::string filename)

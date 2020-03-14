@@ -94,6 +94,7 @@
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
     </ClCompile>
+    <Link />
     <Link>
       <AdditionalDependencies>Common.lib;OpenGLRendering.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
@@ -151,6 +152,7 @@
     <ClCompile Include="GameSimsRenderer.cpp" />
     <ClCompile Include="Laser.cpp" />
     <ClCompile Include="PlayerCharacter.cpp" />
+    <ClCompile Include="QuadTreeNode.cpp" />
     <ClCompile Include="RigidBody.cpp" />
     <ClCompile Include="BadFoodGame.cpp" />
     <ClCompile Include="SimObject.cpp" />
@@ -168,6 +170,7 @@
     <ClInclude Include="GameSimsRenderer.h" />
     <ClInclude Include="Laser.h" />
     <ClInclude Include="PlayerCharacter.h" />
+    <ClInclude Include="QuadTreeNode.h" />
     <ClInclude Include="Random.h" />
     <ClInclude Include="RigidBody.h" />
     <ClInclude Include="BadFoodGame.h" />
