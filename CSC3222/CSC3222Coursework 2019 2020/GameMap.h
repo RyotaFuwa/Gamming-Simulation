@@ -43,7 +43,11 @@ namespace NCL {
 
 			int GetMapHeight() const {
 				return mapHeight;
-			}
+			} 
+
+			char GetMapData(int index) const { return mapData[index]; }
+			bool CheckIfOnGrass(Vector2 pos) const;
+
 		protected:
 			void BuildMapMesh();
 			void AddNewTilePos(int x, int y, std::vector<Vector3>& pos);
@@ -54,12 +58,12 @@ namespace NCL {
 			int structureCount;
 
 			Rendering::TextureBase*	tileTexture;
-			char*	mapData;
+			char*			mapData;
 			int*			mapCosts;
 			Vector2*		mapTexCoords;
 			StructureData*	structureData;		
-
 			MeshGeometry* mapMesh;
+
 		};
 	}
 }

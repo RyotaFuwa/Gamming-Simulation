@@ -1,5 +1,6 @@
 #pragma once
 #include "SimObject.h"
+#include "StateMachine.h"
 
 namespace NCL {
 	namespace CSC3222 {
@@ -20,6 +21,7 @@ namespace NCL {
 			};
 			RobotType type;
 			int stamina;
+			StateMachine::StateMachine stateMachine;
 		};
 	}
 }

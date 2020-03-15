@@ -94,6 +94,17 @@ void GameMap::DrawMap(GameSimsRenderer & r) {
 	}
 }
 
+bool GameMap::CheckIfOnGrass(Vector2 pos) const
+{
+	int index = trunc(pos.y / 16) * mapWidth + trunc(pos.x / 16);
+
+	// debug
+	// std::cout << mapData[index] << std::endl;
+
+	return mapData[index] == '0' || mapData[index] == 'p';
+}
+
+
 void GameMap::BuildMapMesh() {
 	vector<Vector2> texCoords;
 	vector<Vector3> positions;

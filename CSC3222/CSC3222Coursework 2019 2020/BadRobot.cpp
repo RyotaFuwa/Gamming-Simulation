@@ -41,15 +41,14 @@ BadRobot::BadRobot() : SimObject(State::ACTIVE) {
 	CollisionVolume* cv = new Circle(8.0);
 	cv->SetPos(&position);
 	SetCollider(cv);
+
 }
 
 BadRobot::~BadRobot() {
-
 }
 
 bool BadRobot::UpdateObject(float dt) {
 	UpdateAnimFrame(dt);
-
 	return true;
 }
 

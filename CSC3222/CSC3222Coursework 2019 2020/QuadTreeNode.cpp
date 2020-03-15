@@ -66,24 +66,28 @@ vector<BodyPairs> QuadTreeNode::RetriveCollisionPairs() {
 }
 
 void QuadTreeNode::Refresh() {
-	dynamicBodies.clear();
-	for (int division = 0; division < 4; division++) {
-		if (!children[division])
-			children[division]->Refresh();
+	if (leaf) {
+		dynamicBodies.clear();
+	}
+	else {
+		for (int division = 0; division < 4; division++) {
+			if (!children[division])
+				children[division]->Refresh();
+		}
 	}
 }
 
 void QuadTreeNode::Split() {
 	leaf = false;
-	Vector2 newSize = shape->GetHalfSize() / 2.0;
-	Vector2 newPos = shape->GetPos() - newSize;
-	children[Division::TOP_LEFT] = new QuadTreeNode(newPos, newSize, depth+1);
-	newPos.y += 2 * newSize.y;
-	children[Division::BOTTOM_LEFT] = new QuadTreeNode(newPos, newSize, depth+1);
-	newPos.x += 2 * newSize.x;
-	children[Division::BOTTOM_RIGHT] = new QuadTreeNode(newPos, newSize, depth+1);
-	newPos.y -= 2 * newSize.y;
-	children[Division::TOP_RIGHT] = new QuadTreeNode(newPos, newSize, depth+1);
+	Vector2 newHalfSize = shape->GetHalfSize() / 2.0;
+	Vector2 newPos = shape->GetPos() - newHalfSize;
+	children[Division::TOP_LEFT] = new QuadTreeNode(newPos, newHalfSize, depth+1);
+	newPos.y += 2 * newHalfSize.y;
+	children[Division::BOTTOM_LEFT] = new QuadTreeNode(newPos, newHalfSize, depth+1);
+	newPos.x += 2 * newHalfSize.x;
+	children[Division::BOTTOM_RIGHT] = new QuadTreeNode(newPos, newHalfSize, depth+1);
+	newPos.y -= 2 * newHalfSize.y;
+	children[Division::TOP_RIGHT] = new QuadTreeNode(newPos, newHalfSize, depth+1);
 
 	for (auto body : dynamicBodies) {
 		for (int division = 0; division < 4; division++) {

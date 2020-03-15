@@ -85,8 +85,8 @@ void BadFoodGame::Update(float dt) {
 		Vector2 mousePos = Window::GetMouse()->GetAbsolutePosition(); //TODO
 		float coordinateRatioX = currentMap->GetMapWidth() / Window::GetWindow()->GetScreenSize().x;
 		float coordinateRatioY = currentMap->GetMapHeight() / Window::GetWindow()->GetScreenSize().y;
-		mousePos.x *= cellsize * coordinateRatioX;
-		mousePos.y *= cellsize * coordinateRatioY;
+		mousePos.x *= 16 * coordinateRatioX;
+		mousePos.y *= 16 * coordinateRatioY;
 		Vector2 pPos = player->GetPosition();
 		Vector2 dir = mousePos - pPos;
 		Laser* l = new Laser(dir.Normalised() * 300, player->GetPlayerId());
@@ -128,20 +128,18 @@ void BadFoodGame::Update(float dt) {
 	}
 	*/
 
-	/*
 	// debug tool
-	if (Window::GetMouse()->ButtonPressed(MouseButtons::RIGHT)) {
+	if (Window::GetMouse()->ButtonHeld(MouseButtons::RIGHT)) {
 		Vector2 mousePos = Window::GetMouse()->GetAbsolutePosition(); //TODO
 		float coordinateRatioX = currentMap->GetMapWidth() / Window::GetWindow()->GetScreenSize().x;
 		float coordinateRatioY = currentMap->GetMapHeight() / Window::GetWindow()->GetScreenSize().y;
 		mousePos.x *= coordinateRatioX;
 		mousePos.y *= coordinateRatioY;
-		Vector2 pos(mousePos.x * cellsize, mousePos.y * cellsize);
-		renderer->DrawBox(pos, Vector2(cellsize/2.0, cellsize/2.0), Vector4(1, 0, 0, 1));
+		Vector2 pos(mousePos.x * 16, mousePos.y * 16);
+		renderer->DrawBox(pos, Vector2(16/2.0, 16/2.0), Vector4(1, 0, 0, 1));
 		std::cout << pos << std::endl;
 	}
-	*/
-		renderer->Render();
+	renderer->Render();
 }
 
 void BadFoodGame::InitialiseGame() {
@@ -153,8 +151,7 @@ void BadFoodGame::InitialiseGame() {
 
 	currentMap = new GameMap("BadFoodMap.txt", gameObjects, *texManager); 
 
-	cellsize = 16;
-	renderer->SetScreenProperties(cellsize, currentMap->GetMapWidth(), currentMap->GetMapHeight());
+	renderer->SetScreenProperties(16, currentMap->GetMapWidth(), currentMap->GetMapHeight());
 
 	physicsFixedDeltaTime = 1.0 / 120;
 	graphicsFixedDeltaTime = 1.0 / 60;
@@ -162,13 +159,16 @@ void BadFoodGame::InitialiseGame() {
 	AddStaticObstacle("Walls.txt");
 	AddStaticObstacle("OtherObstacles.txt");
 
-	Vector2 mapHalfSize = Vector2(currentMap->GetMapWidth(), currentMap->GetMapHeight()) * cellsize / 2.0;
+	Vector2 mapHalfSize = Vector2(currentMap->GetMapWidth(), currentMap->GetMapHeight()) * 8.0;
 	Vector2 &mapCenter = mapHalfSize;
 	physics->InitialiseQuadTree(mapCenter, mapHalfSize);
 
 	player = new PlayerCharacter();
 	player->SetCharacterType(PlayerCharacter::CharacterType::TYPE_B);
-	player->SetPosition(Vector2(200, 200));
+
+	Vector2 initPos(200, 200);
+	player->SetWasOnGrass(currentMap->CheckIfOnGrass(initPos));
+	player->SetPosition(initPos);
 	AddNewObject(player);
 
 	/* Test: Object Placement
@@ -277,8 +277,8 @@ void NCL::CSC3222::BadFoodGame::AutoSpawnEnemy(float possibility, int limit)
 			float randX = (rand() % 100) / 100.0;
 			float randY = (rand() % 100) / 100.0;
 			BadRobot* testRobot = new BadRobot();
-			testRobot->SetPosition(Vector2(randX * cellsize * currentMap->GetMapWidth(),
-				randY * cellsize * currentMap->GetMapHeight()));
+			testRobot->SetPosition(Vector2(randX * 16 * currentMap->GetMapWidth(),
+				randY * 16 * currentMap->GetMapHeight()));
 			AddNewObject(testRobot);
 			numOfEnemy++;
 		}

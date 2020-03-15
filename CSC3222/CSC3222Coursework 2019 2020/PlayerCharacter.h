@@ -21,6 +21,7 @@ namespace NCL {
 			void SetCharacterType(CharacterType t);
 			
 			int GetPlayerId() { return playerId; }
+			void SetWasOnGrass(bool b) { wasOnGrass = b; }
 
 			bool CollisionCallback(SimObject* other, const CollisionRegister& cReg) override;
 
@@ -39,7 +40,7 @@ namespace NCL {
 			CharacterType		charType;
 			int playerId;
 			int NumOfBalloons;
-		private:
+			int wasOnGrass;
 			static int NumOfPlayers;
 		};
 	}

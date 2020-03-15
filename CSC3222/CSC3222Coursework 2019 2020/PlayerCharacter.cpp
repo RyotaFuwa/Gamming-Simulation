@@ -1,3 +1,4 @@
+#include <algorithm>
 #include "PlayerCharacter.h"
 #include "TextureManager.h"
 #include "../../Common/Window.h"
@@ -48,6 +49,21 @@ bool PlayerCharacter::UpdateObject(float dt) {// Define how object moves
 	Vector2 newForce;
 
 	currentAnimDir = MovementDir::Idle;
+
+	if (game->GetCurrentMap()->CheckIfOnGrass(position)) {
+		constSpeed *= 0.8;
+		if(!wasOnGrass) {
+			velocity *= 0.8;
+			wasOnGrass = true;
+		}
+	}
+	else {
+		constSpeed *= 1.2;
+		if (wasOnGrass) {
+			velocity *= 1.2;
+			wasOnGrass = false;
+		}
+	}
 
 	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::W)) {
 		currentAnimDir = MovementDir::Up;
@@ -114,24 +130,8 @@ bool PlayerCharacter::UpdateObject(float dt) {// Define how object moves
 		position.x += constSpeed * dt;
 	}
 
-	/*
-	// moved this implementation to BadFoodGame
-	// shoot laser
-	if (Window::GetMouse()->ButtonPressed(MouseButtons::LEFT)) {
-		std::cout << "Button Held" << std::endl;
-		Vector2 mousePos = Window::GetMouse()->GetAbsolutePosition(); //TODO
-		float coordinateRatioX = game->GetCurrentMap()->GetMapWidth() / Window::GetWindow()->GetScreenSize().x;
-		float coordinateRatioY = game->GetCurrentMap()->GetMapHeight() / Window::GetWindow()->GetScreenSize().y;
-		mousePos.x *= game->GetCellSize() * coordinateRatioX;
-		mousePos.y *= game->GetCellSize() * coordinateRatioY;
-		Vector2 dir = mousePos - position;
-		Laser* l = new Laser(dir.Normalised() * 200, playerId);
-		l->SetPosition(position);
-		game->AddNewObject(l);
-	}
-	*/
 
-force = newForce;
+	force = newForce;
 	return true;
 }
 

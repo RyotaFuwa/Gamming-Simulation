@@ -52,7 +52,6 @@ void NCL::CSC3222::GameSimsPhysics::IntegrateVelocity(float dt)
 	for (auto each : allDynamicBodies) { // change position by integrating the velocity
 		each->position += each->velocity * dt;
 		each->velocity *= 0.999f; // bit inaccurate for air resistance
-		
 	}
 }
 

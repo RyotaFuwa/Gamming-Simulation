@@ -27,7 +27,6 @@ namespace NCL {
 
 			float getGameTime();
 			void AutoSpawnEnemy(float possiblity, int limit);
-			int GetCellSize() { return cellsize; }
 			const GameMap* GetCurrentMap() { return currentMap; }
 
 		protected:
