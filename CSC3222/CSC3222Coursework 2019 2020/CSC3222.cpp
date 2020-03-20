@@ -12,6 +12,8 @@ using namespace Random;
 
 
 // TODO fix a big lag in broadphase
+// Entry for Shops
+// StateMachine Deployment
 int main() {
 	Window*w = Window::CreateGameWindow("CSC3222 - B4DF00D!", 1120, 768);
 

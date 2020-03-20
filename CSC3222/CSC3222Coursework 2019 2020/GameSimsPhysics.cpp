@@ -58,6 +58,7 @@ void NCL::CSC3222::GameSimsPhysics::IntegrateVelocity(float dt)
 void GameSimsPhysics::HandleCollision(float dt) {
 	// broad phase
 	// vector<BodyPairs> bpairs = BroadPhase();
+	std::cout << dt << std::endl;
 	vector<BodyPairs> bpairs;
 	for (auto sbody : allStaticBodies) {
 		for (auto dbody : allDynamicBodies) {
