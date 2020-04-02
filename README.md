@@ -1,2 +1,3 @@
-# GamingSimulation
-Newcastle University CSC3222
+# Gaming-Simulation
+## Physics Engine
+## AI 
